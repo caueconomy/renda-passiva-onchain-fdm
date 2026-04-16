@@ -1,0 +1,15 @@
+{
+  "tbill_1y": 3.7,
+  "tbond_10y": 4.3,
+  "tbill_3m": 3.71,
+  "hi_yield_savings": 4.5,
+  "sofr": 4.1,
+  "sp500_hist_10y": 11.84,
+  "selic_meta": 14.75,
+  "cdi_annual": 14.65,
+  "ipca_12m": 4.14,
+  "usd_brl": 4.9928,
+  "selic_usd_hist": 6.75,
+  "selic_real_brl": 10.19,
+  "updated_at": "2026-04-16T09:28:32.875128+00:00"
+}

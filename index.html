@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Renda Passiva On-chain — Formadores de Mercado</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── DARK MODE (padrão) ─────────────────────────────── */
+:root {
+  --fdm-purple:#822ee5; --fdm-purple-dk:#61358b;
+  --fdm-yellow:#ffb81c; --fdm-green:#8ffff8; --fdm-black:#2c2c2c;
+  --bg:#0f0a1a; --surf1:#1a1228; --surf2:#231733; --border:#2e1f4a;
+  --text:#f0eaf8; --dim:#c4b5d8; --muted:#8b70b8;
+  --green:#4ade80; --yellow:#facc15; --red:#f87171; --blue:#60a5fa;
+  --header-bg:linear-gradient(135deg,#0d0820,#1a0d35 40%,#0d0820);
+  --nav-bg:#1a1228;
+  --input-bg:#231733;
+  --mode-icon:'☀️';
+
+  /* ── Nova hierarquia de cor ─────────────────────────────── */
+  /* APY DeFi: branco quente — máximo contraste sobre fundo roxo */
+  --apy-defi:#f0eaf8;
+  /* APY TradFi: cinza médio — deliberadamente apagado */
+  --apy-trad:#6b7280;
+  /* Links/URLs: índigo claro — diferente do roxo principal */
+  --link-color:#818cf8;
+  /* Nome de protocolo DeFi: lavanda clara */
+  --proto-defi:#c4b5d8;
+}
+/* ── LIGHT MODE ─────────────────────────────────────── */
+[data-theme="light"] {
+  --bg:#f5f3ff; --surf1:#ffffff; --surf2:#f0ebff; --border:#d8cff5;
+  --text:#1e1030; --dim:#5b4a8a; --muted:#8b70b8;
+  --fdm-purple:#822ee5; --fdm-yellow:#c98a00; --fdm-green:#0a8a82;
+  --green:#16a34a; --yellow:#ca8a04; --red:#dc2626; --blue:#2563eb;
+  /* Header roxo sólido — texto SEMPRE branco sobre ele */
+  --header-bg:linear-gradient(135deg,#5b21b6,#822ee5 55%,#5b21b6);
+  --nav-bg:#ffffff;
+  --input-bg:#f0ebff;
+  --mode-icon:'🌙';
+}
+/* No light mode, elementos do header precisam de texto branco fixo
+   pois o fundo é sempre roxo escuro */
+[data-theme="light"] .header { color: white; }
+[data-theme="light"] .brand-text h1 { color: white; }
+[data-theme="light"] .brand-text p  { color: rgba(255,255,255,.75); }
+[data-theme="light"] .update-ts     { color: rgba(255,255,255,.6); }
+[data-theme="light"] .pill-purple   { background:rgba(255,255,255,.2); color:white; border-color:rgba(255,255,255,.4); }
+[data-theme="light"] .pill-green    { background:rgba(255,255,255,.15); color:rgba(255,255,255,.9); border-color:rgba(255,255,255,.3); }
+[data-theme="light"] .btn-mode      { background:rgba(255,255,255,.2); color:white; border-color:rgba(255,255,255,.4); }
+[data-theme="light"] .btn-mode:hover{ background:rgba(255,255,255,.35); }
+[data-theme="light"] .btn-refresh   { background:rgba(255,255,255,.15); color:white; border-color:rgba(255,255,255,.35); }
+[data-theme="light"] .btn-refresh:hover{ background:rgba(255,255,255,.25); }
+[data-theme="light"] .btn-pdf       { background:rgba(255,184,28,.3); color:white; border-color:rgba(255,184,28,.6); }
+[data-theme="light"] .btn-pdf:hover { background:rgba(255,184,28,.45); }
+/* Nav e cards no light mode */
+[data-theme="light"] .nav-tab        { color: var(--dim); }
+[data-theme="light"] .nav-tab:hover  { color: var(--text); }
+[data-theme="light"] .kpi-card       { box-shadow: 0 1px 4px rgba(130,46,229,.08); }
+[data-theme="light"] .table-card     { box-shadow: 0 1px 4px rgba(130,46,229,.08); }
+[data-theme="light"] thead th        { background: var(--surf2); }
+[data-theme="light"] tbody tr:hover  { background: rgba(130,46,229,.04); }
+/* Cores de texto no light mode — garantir contraste */
+[data-theme="light"] .dim-text        { color: #5b4a8a !important; }
+[data-theme="light"] .tvl-val         { color: #1e1030 !important; }
+[data-theme="light"] .proto-name      { color: #1e1030 !important; }
+[data-theme="light"] .apy-mid         { color: #374151 !important; }
+/* Projeção mensal — textos inline ficam invisíveis no light */
+[data-theme="light"] #projBody td     { color: #1e1030 !important; }
+/* Tabela comparativa DeFi — nomes de protocolo */
+[data-theme="light"] [style*="--proto-defi"] { color: #822ee5 !important; }
+/* Override var(--apy-defi) no light = texto escuro legível */
+[data-theme="light"] { --apy-defi: #3b0764; }
+[data-theme="light"] { --proto-defi: #5b21b6; }
+[data-theme="light"] { --link-color: #4338ca; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sora',-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;transition:background .3s,color .3s}
+.header{background:var(--header-bg);border-bottom:1px solid var(--border);padding:24px 40px 20px;position:relative;overflow:hidden;transition:background .3s}
+.header::before{content:'';position:absolute;top:-80px;right:-80px;width:360px;height:360px;background:radial-gradient(circle,rgba(130,46,229,.18),transparent 70%);pointer-events:none}
+/* ── BOTÕES DE AÇÃO NO HEADER ────────────────────────── */
+.action-btns{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn-mode{padding:7px 13px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--border);background:rgba(130,46,229,.15);color:#c084fc;cursor:pointer;font-family:'Sora',sans-serif;transition:all .2s;white-space:nowrap}
+.btn-mode:hover{background:rgba(130,46,229,.3);color:white}
+.btn-refresh{padding:7px 14px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid rgba(143,255,248,.3);background:rgba(143,255,248,.1);color:var(--fdm-green);cursor:pointer;font-family:'Sora',sans-serif;transition:all .2s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-refresh:hover{background:rgba(143,255,248,.2)}
+.btn-refresh.loading{opacity:.6;cursor:wait}
+.btn-pdf{padding:7px 14px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid rgba(255,184,28,.35);background:rgba(255,184,28,.12);color:var(--fdm-yellow);cursor:pointer;font-family:'Sora',sans-serif;transition:all .2s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-pdf:hover{background:rgba(255,184,28,.25)}
+.spin{display:inline-block;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.header-inner{max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-text h1{font-size:20px;font-weight:700;letter-spacing:-.3px}
+.brand-text p{font-size:12px;color:var(--dim);margin-top:3px}
+.header-meta{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.4px;text-transform:uppercase}
+.pill-purple{background:rgba(130,46,229,.2);color:#c084fc;border:1px solid rgba(130,46,229,.35)}
+.pill-green{background:rgba(143,255,248,.12);color:var(--fdm-green);border:1px solid rgba(143,255,248,.25)}
+.pill-dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:blink 1.8s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.update-ts{font-size:11px;color:var(--muted)}
+.nav-wrap{background:var(--nav-bg);border-bottom:1px solid var(--border);transition:background .3s}
+.nav{max-width:1280px;margin:0 auto;display:flex;padding:0 40px}
+.nav-tab{padding:13px 18px;font-size:13px;font-weight:500;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:'Sora',sans-serif}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{color:var(--fdm-purple);border-bottom-color:var(--fdm-purple)}
+.main{max-width:1280px;margin:0 auto;padding:28px 40px}
+.section{display:none}
+.section.active{display:block}
+.disclaimer{background:rgba(255,184,28,.06);border:1px solid rgba(255,184,28,.2);border-radius:10px;padding:12px 16px;margin-bottom:24px;font-size:12px;color:var(--fdm-yellow);line-height:1.6;display:flex;gap:10px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:28px}
+.kpi-card{background:var(--surf1);border:1px solid var(--border);border-radius:14px;padding:18px 18px 16px;position:relative;overflow:hidden;transition:border-color .2s,background .3s}
+.kpi-card:hover{border-color:rgba(130,46,229,.5)}
+.kpi-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:14px 0 0 14px}
+.kpi-card.c-purple::before{background:var(--fdm-purple)}
+.kpi-card.c-yellow::before{background:var(--fdm-yellow)}
+.kpi-card.c-green::before{background:var(--green)}
+.kpi-card.c-blue::before{background:var(--blue)}
+.kpi-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.kpi-val{font-size:26px;font-weight:700;letter-spacing:-.5px}
+.kpi-val.purple{color:var(--apy-defi)}
+.kpi-val.yellow{color:var(--fdm-yellow)}
+.kpi-val.green{color:var(--green)}
+.kpi-val.blue{color:var(--blue)}
+.kpi-sub{font-size:11px;color:var(--dim);margin-top:4px}
+.chart-card{background:var(--surf1);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:24px}
+.chart-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.chart-sub{font-size:11px;color:var(--muted);margin-bottom:20px}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bar-label{width:220px;font-size:11px;color:var(--text);text-align:right;flex-shrink:0}
+.bar-label.trad{color:var(--dim)}
+.bar-track{flex:1;height:22px;background:rgba(255,255,255,.03);border-radius:6px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:700;color:white;min-width:50px;position:relative;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.bar-30{height:100%;position:absolute;left:0;top:0;border-radius:6px;background:var(--fdm-purple-dk);opacity:.4}
+.bar-fill.defi{background:linear-gradient(90deg,var(--fdm-purple-dk),var(--fdm-purple))}
+.bar-fill.trad-low{background:#374151}
+.bar-fill.trad-selic{background:#78350f}  /* âmbar escuro — Selic adj. USD */
+.bar-badge.brl{background:rgba(120,53,15,.3);color:#fbbf24}
+.bar-badge{flex-shrink:0;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px}
+.bar-badge.defi{background:rgba(130,46,229,.2);color:var(--fdm-green)}
+.bar-badge.trad{background:rgba(55,65,81,.3);color:var(--dim)}
+.chart-legend{display:flex;gap:18px;margin-top:14px;flex-wrap:wrap}
+.leg{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim)}
+.leg-dot{width:10px;height:10px;border-radius:3px}
+.table-card{background:var(--surf1);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:24px}
+.table-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.table-title{font-size:14px;font-weight:600}
+.table-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap}
+.fbtn{padding:5px 13px;border-radius:8px;font-size:11px;font-weight:500;border:1px solid var(--border);background:var(--surf2);color:var(--dim);cursor:pointer;transition:all .15s;font-family:'Sora',sans-serif}
+.fbtn:hover{color:var(--text);border-color:rgba(130,46,229,.5)}
+.fbtn.active{background:rgba(130,46,229,.15);color:#c084fc;border-color:rgba(130,46,229,.5)}
+table{width:100%;border-collapse:collapse}
+thead th{padding:11px 14px;text-align:left;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);white-space:nowrap}
+thead th:first-child{padding-left:20px}
+thead th:last-child{padding-right:20px}
+tbody tr{border-bottom:1px solid rgba(46,31,74,.4);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:rgba(255,255,255,.02)}
+tbody td{padding:13px 14px;vertical-align:middle}
+tbody td:first-child{padding-left:20px}
+tbody td:last-child{padding-right:20px}
+.proto-cell{display:flex;align-items:center;gap:10px}
+.proto-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:rgba(130,46,229,.12)}
+.proto-name{font-weight:600;font-size:13px}
+.proto-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.apy-hi{color:var(--apy-defi);font-weight:700;font-size:14px}
+.apy-mid{color:var(--apy-trad);font-weight:600;font-size:13px}
+.dim-text{color:var(--dim);font-size:12px}
+.risk-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:600}
+.risk-low{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.25)}
+.risk-med{background:rgba(250,204,21,.1);color:#facc15;border:1px solid rgba(250,204,21,.25)}
+.risk-high{background:rgba(248,113,113,.1);color:#f87171;border:1px solid rgba(248,113,113,.25)}
+.chain-tag{display:inline-flex;padding:2px 7px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+.ch-eth{background:rgba(130,46,229,.15);color:#c084fc}
+.ch-base{background:rgba(0,82,255,.15);color:#60a5fa}
+.ch-arb{background:rgba(18,161,242,.15);color:#38bdf8}
+.link-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:10px;font-weight:600;background:rgba(129,140,248,.12);color:var(--link-color);text-decoration:none;border:1px solid rgba(129,140,248,.3);transition:all .15s}
+.link-btn:hover{background:rgba(129,140,248,.25);color:white}
+.tvl-val{font-size:12px;font-weight:600;color:var(--text)}
+.sim-grid{display:grid;grid-template-columns:320px 1fr;gap:22px}
+.sim-panel{background:var(--surf1);border:1px solid var(--border);border-radius:14px;padding:22px}
+.sim-panel h3{font-size:14px;font-weight:600;margin-bottom:18px}
+.form-group{margin-bottom:16px}
+.form-label{font-size:11px;color:var(--dim);margin-bottom:7px;display:block;font-weight:500}
+.form-input,.form-select{width:100%;padding:9px 12px;background:var(--surf2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:'Sora',sans-serif}
+.form-input:focus,.form-select:focus{outline:none;border-color:var(--fdm-purple)}
+input[type=range]{width:100%;accent-color:var(--fdm-purple);cursor:pointer}
+.range-row{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px}
+.calc-btn{width:100%;padding:11px;background:linear-gradient(135deg,var(--fdm-purple-dk),var(--fdm-purple));border:none;border-radius:10px;color:white;font-size:13px;font-weight:600;cursor:pointer;font-family:'Sora',sans-serif;transition:opacity .2s}
+.calc-btn:hover{opacity:.9}
+.res-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.res-card{background:var(--surf1);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.res-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.res-val{font-size:26px;font-weight:700}
+.res-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.risk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.risk-card{background:var(--surf1);border:1px solid var(--border);border-radius:14px;padding:20px}
+.risk-card-title{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;margin-bottom:13px}
+.risk-list{list-style:none}
+.risk-list li{font-size:12px;color:var(--dim);padding:5px 0;border-bottom:1px solid rgba(46,31,74,.4);display:flex;gap:7px;line-height:1.5}
+.risk-list li:last-child{border-bottom:none}
+.risk-list li::before{content:'▸';color:var(--fdm-purple);flex-shrink:0}
+.sec-title{font-size:15px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--border);margin-left:8px}
+.footer{border-top:1px solid var(--border);padding:18px 40px;text-align:center;font-size:11px;color:var(--muted)}
+/* ── FILTROS DA MATRIZ RISCO ─────────────────────────────── */
+.risk-filter-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.risk-filter-btn{padding:5px 13px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-family:'Sora',sans-serif;transition:all .2s}
+.risk-filter-btn:hover{border-color:var(--fdm-purple);color:var(--text)}
+.risk-filter-btn.active{background:rgba(130,46,229,.18);border-color:var(--fdm-purple);color:var(--fdm-purple)}
+.sort-th{cursor:pointer;user-select:none;white-space:nowrap}
+.sort-th:hover{color:var(--fdm-purple)}
+.sort-arrow{font-size:10px;margin-left:3px;opacity:.7}
+/* ── LIGHT MODE — correções de contraste ─────────────────── */
+[data-theme="light"] .risk-low  { color:#15803d !important; background:rgba(22,163,74,.12) !important; border-color:rgba(22,163,74,.35) !important; }
+[data-theme="light"] .risk-med  { color:#92400e !important; background:rgba(180,83,9,.1) !important; border-color:rgba(180,83,9,.3) !important; }
+[data-theme="light"] .risk-high { color:#991b1b !important; background:rgba(220,38,38,.1) !important; border-color:rgba(220,38,38,.3); }
+[data-theme="light"] .kpi-label { color:#6b4f8a !important; }
+[data-theme="light"] .kpi-sub   { color:#5b4a8a !important; }
+[data-theme="light"] .chart-sub { color:#6b4f8a !important; }
+[data-theme="light"] .bar-label { color:#1e1030 !important; }
+[data-theme="light"] .bar-label.trad { color:#374151 !important; }
+[data-theme="light"] .sec-title { color:#1e1030 !important; }
+[data-theme="light"] .risk-filter-btn { color:#5b4a8a; border-color:#d8cff5; }
+[data-theme="light"] .risk-filter-btn.active { color:#822ee5; background:rgba(130,46,229,.1); border-color:#822ee5; }
+[data-theme="light"] .sort-th { color:#1e1030; }
+[data-theme="light"] .sort-th:hover { color:#822ee5; }
+[data-theme="light"] .link-btn { color:#4338ca !important; border-color:rgba(67,56,202,.3) !important; }
+[data-theme="light"] .risk-card { background:#ffffff; border-color:#d8cff5; }
+[data-theme="light"] .risk-card-title { color:#1e1030; }
+[data-theme="light"] .risk-list li { color:#374151; border-color:#e9e3ff; }
+/* ── DARK MODE — melhorar legibilidade ───────────────────── */
+.nav-tab.active { color:#d4b8ff; }
+.bar-label { color:var(--text); }
+.bar-label.trad { color:var(--dim); }
+
+/* ── PRINT / GERAR PDF ───────────────────────────────────── */
+#print-view { display:none; }
+@media print {
+  @page { size: A4 portrait; margin: 0; }
+  body > *:not(#print-view) { display: none !important; }
+  #print-view {
+    display: block !important;
+    position: fixed; top: 0; left: 0;
+    width: 210mm; min-height: 297mm;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="brand">
+      <img src="data:image/png;base64,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" alt="Formadores de Mercado" style="height:40px;width:auto;filter:brightness(0) invert(1)">
+      <div class="brand-text" style="border-left:1px solid rgba(130,46,229,.4);padding-left:14px;margin-left:4px">
+        <h1>Renda Passiva On-chain</h1>
+        <p>DeFi vs Mercado Tradicional · Ethereum · Base · Arbitrum</p>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="action-btns">
+        <!-- Light/Dark Mode -->
+        <button class="btn-mode" onclick="toggleTheme()" id="btnMode" title="Alternar tema">☀️ Light</button>
+        <!-- Refresh de dados -->
+        <button class="btn-refresh" id="btnRefresh" onclick="refreshData()" title="Atualizar dados DeFiLlama">
+          <span id="refreshIcon">↻</span> Atualizar Dados
+        </button>
+        <!-- Gerar PDF -->
+        <button class="btn-pdf" onclick="generatePDF()" title="Imprimir / Salvar como PDF">
+          📄 Gerar PDF
+        </button>
+      </div>
+      <div class="update-ts">Atualizado: <span id="updateTs"></span></div>
+    </div>
+  </div>
+</header>
+
+<div class="nav-wrap">
+  <nav class="nav">
+    <button class="nav-tab active" onclick="showTab('overview',this)">Visão Geral</button>
+    <button class="nav-tab" onclick="showTab('trad',this)">vs Mercado Tradicional</button>
+    <button class="nav-tab" onclick="showTab('protocols',this)">Protocolos</button>
+    <button class="nav-tab" onclick="showTab('simulator',this)">Simulador</button>
+    <button class="nav-tab" onclick="showTab('risk',this)">Análise de Risco</button>
+    <button class="nav-tab" onclick="showTab('brazil',this)">vs Brasil 🇧🇷</button>
+  </nav>
+</div>
+
+<div class="main">
+
+<div id="overview" class="section active">
+  <div class="disclaimer"><span>⚠️</span><span><strong>Dados ao vivo capturados da API DeFiLlama:</strong> 16.740 pools rastreados · 20 selecionados (USDC/USDT, TVL &gt; $10M). APYs e TVLs são variáveis. Federal Reserve H.15 (13/04/2026). Não constitui recomendação de investimento.</span></div>
+  <div class="kpi-grid" id="kpiGrid"></div>
+  <div class="chart-card">
+    <div class="chart-title">APY Anual — DeFi vs Mercado Tradicional</div>
+    <div class="chart-sub">Dados ao vivo DeFiLlama · Federal Reserve H.15 (13/04/2026) · Barra sólida = APY atual · Faixa atrás = média 30d</div>
+    <div id="barChart"></div>
+    <div class="chart-legend">
+      <div class="leg"><div class="leg-dot" style="background:var(--fdm-purple)"></div>DeFi — APY atual</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--fdm-purple-dk);opacity:.5"></div>DeFi — média 30d</div>
+      <div class="leg"><div class="leg-dot" style="background:#374151"></div>TradFi USD</div>
+      <div class="leg"><div class="leg-dot" style="background:#78350f"></div>Selic adj. USD</div>
+    </div>
+  </div>
+  <div class="sec-title">Top Oportunidades — Risco/Retorno</div>
+  <div style="font-size:11.5px;color:var(--dim);line-height:1.7;margin:-8px 0 14px;padding:10px 14px;background:rgba(130,46,229,.06);border-left:3px solid var(--fdm-purple);border-radius:0 8px 8px 0;">
+    <strong style="color:var(--text)">Como esses 5 são escolhidos:</strong>
+    dos 30 pools rastreados (USDT/USDC · TVL &gt; $10M · APY e APY30d &gt; 1,5% · Ethereum, Base, Arbitrum),
+    excluímos os de <strong>risco alto</strong> (crédito privado sem liquidez imediata: Maple, Goldfinch, Yo Protocol)
+    e ordenamos pelo <strong>maior APY atual</strong>.
+    O resultado são os 5 protocolos com melhor retorno entre os que oferecem saque flexível e histórico auditável.
+    <span style="color:var(--muted)"> · APY é variável e pode mudar a qualquer momento.</span>
+  </div>
+  <div class="table-card">
+    <table><thead><tr><th>Protocolo</th><th>Ativo</th><th>Rede</th><th>APY Atual</th><th>APY 30d</th><th>TVL</th><th>Risco</th><th>Acessar</th></tr></thead>
+    <tbody id="quickTable"></tbody></table>
+  </div>
+</div>
+
+<div id="protocols" class="section">
+  <div class="table-card">
+    <div class="table-header">
+      <div><div class="table-title">Todos os Protocolos — Dados DeFiLlama</div>
+      <div class="table-sub">Seleção por TVL &gt; $10M em USDT/USDC · Ethereum · Base · Arbitrum</div></div>
+      <div class="filter-row">
+        <button class="fbtn active" onclick="filterTbl('all',this)">Todos</button>
+        <button class="fbtn" onclick="filterTbl('Ethereum',this)">Ethereum</button>
+        <button class="fbtn" onclick="filterTbl('Base',this)">Base</button>
+        <button class="fbtn" onclick="filterTbl('Arbitrum',this)">Arbitrum</button>
+        <button class="fbtn" onclick="filterTbl('low',this)">🟢 Risco Baixo</button>
+        <button class="fbtn" onclick="sortTbl('apy',this)">↓ APY</button>
+        <button class="fbtn" onclick="sortTbl('tvl',this)">↓ TVL</button>
+      </div>
+    </div>
+    <table><thead><tr><th>Protocolo</th><th>Ativo</th><th>Rede</th><th>APY Atual</th><th>APY 30d</th><th>TVL</th><th>Risco</th><th>Descrição</th><th>Acessar</th></tr></thead>
+    <tbody id="fullTable"></tbody></table>
+  </div>
+</div>
+
+<div id="simulator" class="section">
+  <div class="sim-grid">
+    <div class="sim-panel">
+      <h3>🧮 Simulador de Retorno</h3>
+      <div class="form-group"><label class="form-label">Capital inicial (USD)</label><input type="number" id="capital" class="form-input" value="10000" min="100"></div>
+      <div class="form-group"><label class="form-label">Protocolo de referência</label><select id="protoSel" class="form-select" onchange="syncApy()"></select></div>
+      <div class="form-group"><label class="form-label">APY personalizado: <strong id="apyDisp">5.30</strong>%</label><input type="range" id="apyRange" min="0.5" max="40" step="0.1" value="5.30" oninput="document.getElementById('apyDisp').textContent=parseFloat(this.value).toFixed(2)"><div class="range-row"><span>0.5%</span><span>20%</span><span>40%</span></div></div>
+      <div class="form-group"><label class="form-label">Horizonte</label><select id="horizSel" class="form-select"><option value="1">1 mês</option><option value="3">3 meses</option><option value="6">6 meses</option><option value="12" selected>12 meses</option><option value="24">24 meses</option></select></div>
+      <div class="form-group"><label class="form-label">Compounding</label><select id="compSel" class="form-select"><option value="12" selected>Mensal</option><option value="52">Semanal</option><option value="365">Diário</option><option value="1">Anual</option></select></div>
+      <button class="calc-btn" onclick="calcSim()">Calcular →</button>
+    </div>
+    <div>
+      <div class="res-grid">
+        <div class="res-card"><div class="res-label">Rendimento Total</div><div class="res-val" id="rYield" style="color:var(--apy-defi)">—</div><div class="res-sub" id="rPct">—</div></div>
+        <div class="res-card"><div class="res-label">Saldo Final</div><div class="res-val" id="rBal" style="color:var(--blue)">—</div><div class="res-sub">Capital + Juros</div></div>
+        <div class="res-card"><div class="res-label">Rendimento/Mês</div><div class="res-val" id="rMo" style="color:var(--fdm-yellow)">—</div><div class="res-sub" id="rMoPct">—</div></div>
+        <div class="res-card"><div class="res-label">Vantagem vs T-Bill 1a</div><div class="res-val" id="rVs" style="color:var(--green)">—</div><div class="res-sub">vs 3.70% a.a. (Fed)</div></div>
+      </div>
+      <div class="table-card" style="margin-bottom:16px">
+        <div class="table-header"><div class="table-title">Crescimento Acumulado — DeFi vs T-Bill</div><div class="table-sub" style="font-size:11px;color:var(--muted)">Calculado com dados ao vivo</div></div>
+        <canvas id="growthChart" style="width:100%;height:220px;display:block"></canvas>
+      </div>
+      <div class="table-card"><div class="table-header"><div class="table-title">Projeção Mensal</div></div>
+      <table><thead><tr><th>Mês</th><th>Saldo</th><th>Juros do Mês</th><th>Acumulado</th><th>Retorno Total</th></tr></thead>
+      <tbody id="projBody"></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<div id="risk" class="section">
+  <div class="sec-title">Categorias de Risco</div>
+  <div class="risk-grid">
+    <div class="risk-card"><div class="risk-card-title"><span>⚙️</span>Smart Contract Risk</div><ul class="risk-list"><li>Bugs ou vulnerabilidades no código podem ser explorados por atacantes</li><li>Flash loans, oracle manipulation e reentrância são os vetores principais</li><li>Prefira protocolos com múltiplas auditorias (Aave, Compound) e bug bounties ativos</li><li>Aave e Compound têm track record desde 2018–2020 sem hacks críticos</li></ul></div>
+    <div class="risk-card"><div class="risk-card-title"><span>💧</span>Risco de Liquidez</div><ul class="risk-list"><li>Alta utilização (&gt;90%) pode impedir saques imediatos</li><li>Aave tem Interest Rate Curve que eleva juros para desincentivá-los em momentos de stress</li><li>Verifique taxa de utilização atual antes de alocar em novos protocolos</li><li>Mantenha capital de reserva fora do protocolo para emergências</li></ul></div>
+    <div class="risk-card"><div class="risk-card-title"><span>🔗</span>Risco do Ativo</div><ul class="risk-list"><li>USDT (Tether): maior liquidez, emissor parcialmente auditado, risco de depeg existe</li><li>USDC (Circle): regulado, auditado — dependente do sistema bancário americano</li><li>Em março/2023 USDC perdeu paridade temporariamente por exposição ao SVB</li><li>Diversificar entre USDC e USDT reduz concentração no emissor</li></ul></div>
+    <div class="risk-card"><div class="risk-card-title"><span>📉</span>Risco de Rendimento</div><ul class="risk-list"><li>APY é variável — pode cair com mudança na demanda de empréstimos</li><li>Incentivos em tokens de governança podem ser reduzidos sem aviso</li><li>Compare APY atual vs média 30 dias — desvios grandes indicam incentivo temporário</li><li>Pendle Finance permite travar yield fixo eliminando esse risco</li></ul></div>
+    <div class="risk-card"><div class="risk-card-title"><span>🔑</span>Risco Operacional</div><ul class="risk-list"><li>Perda de seed phrase resulta em perda permanente e irrecuperável</li><li>Phishing e sites falsos são os vetores mais comuns de ataque</li><li>Hardware wallet (Ledger, Trezor) elimina a maioria dos vetores remotos</li><li>Sempre verificar endereço do contrato em fontes oficiais antes de aprovar</li></ul></div>
+    <div class="risk-card"><div class="risk-card-title"><span>⚖️</span>Risco Regulatório</div><ul class="risk-list"><li>Regulação de DeFi em evolução nos EUA, Europa e Brasil</li><li>USDC e USDT podem ter saldos congelados pelo emissor</li><li>L2s (Base, Arbitrum) têm sequencer centralizado como risco adicional</li><li>MiCA europeia cria mais clareza regulatória para stablecoins</li></ul></div>
+  </div>
+  <div class="sec-title" style="margin-top:28px">Matriz Risco × Retorno</div>
+  <div class="risk-filter-bar">
+    <span style="font-size:11px;color:var(--muted)">Filtrar:</span>
+    <button class="risk-filter-btn active" id="rf-all"  onclick="filterRiskMatrix('all')">Todos</button>
+    <button class="risk-filter-btn" id="rf-low"  onclick="filterRiskMatrix('Baixo')">🟢 Baixo</button>
+    <button class="risk-filter-btn" id="rf-med"  onclick="filterRiskMatrix('Médio')">🟡 Médio</button>
+    <button class="risk-filter-btn" id="rf-high" onclick="filterRiskMatrix('Alto')">🔴 Alto</button>
+  </div>
+  <!-- Erros comuns — gatilho de conversão -->
+  <div style="background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.25);border-radius:14px;padding:20px 24px;margin-bottom:24px">
+    <div style="font-size:14px;font-weight:700;color:#f87171;margin-bottom:4px">⚠️ Por que a maioria erra na renda passiva on-chain</div>
+    <div style="font-size:11.5px;color:var(--muted);margin-bottom:14px">Os erros abaixo são os mais comuns — e os mais custosos.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="background:rgba(15,10,26,.5);border-radius:10px;padding:14px 16px;border-left:3px solid #f87171">
+        <div style="font-size:12px;font-weight:700;color:#f0eaf8;margin-bottom:4px">Escolher protocolo pelo APY mais alto</div>
+        <div style="font-size:11.5px;color:var(--dim);line-height:1.6">APY alto sem track record é sinal de risco elevado — não de oportunidade. Protocolos com menos de 12 meses de histórico ou sem auditoria pagam mais porque precisam atrair liquidez.</div>
+      </div>
+      <div style="background:rgba(15,10,26,.5);border-radius:10px;padding:14px 16px;border-left:3px solid #facc15">
+        <div style="font-size:12px;font-weight:700;color:#f0eaf8;margin-bottom:4px">Concentrar em um único protocolo</div>
+        <div style="font-size:11.5px;color:var(--dim);line-height:1.6">Um único smart contract comprometido elimina toda a posição. Diversificar entre 2–3 protocolos de risco diferente é a prática padrão de gestores profissionais.</div>
+      </div>
+      <div style="background:rgba(15,10,26,.5);border-radius:10px;padding:14px 16px;border-left:3px solid #facc15">
+        <div style="font-size:12px;font-weight:700;color:#f0eaf8;margin-bottom:4px">Ignorar o APY médio 30 dias</div>
+        <div style="font-size:11.5px;color:var(--dim);line-height:1.6">APY atual pode ser 3× o APY30d — sinal de incentivo temporário via tokens de governança. A tabela mostra os dois valores: desvios grandes merecem atenção.</div>
+      </div>
+      <div style="background:rgba(15,10,26,.5);border-radius:10px;padding:14px 16px;border-left:3px solid #f87171">
+        <div style="font-size:12px;font-weight:700;color:#f0eaf8;margin-bottom:4px">Execução incorreta na primeira alocação</div>
+        <div style="font-size:11.5px;color:var(--dim);line-height:1.6">Approve infinito, endereço errado, taxa de gas insuficiente, protocolo falso. A maioria das perdas em DeFi não é por hack — é por erro operacional do usuário na primeira transação.</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(248,113,113,.15);font-size:12px;color:var(--muted);font-style:italic">
+      Estratégias como essa exigem seleção criteriosa, monitoramento contínuo e gestão de risco ativa — não são set-and-forget.
+    </div>
+  </div>
+
+  <div class="table-card"><table><thead><tr>
+    <th>Protocolo</th>
+    <th>Risco Geral</th>
+    <th class="sort-th" onclick="sortRiskMatrix('score')">Score <span class="sort-arrow" id="rs-score"></span></th>
+    <th class="sort-th" onclick="sortRiskMatrix('apy')">APY Atual <span class="sort-arrow" id="rs-apy">↓</span></th>
+    <th class="sort-th" onclick="sortRiskMatrix('apy30')">APY 30d <span class="sort-arrow" id="rs-apy30"></span></th>
+    <th class="sort-th" onclick="sortRiskMatrix('tvl')">TVL <span class="sort-arrow" id="rs-tvl"></span></th>
+    <th>Descrição Curta</th>
+    <th>Acessar</th>
+  </tr></thead><tbody id="riskMatrix"></tbody></table></div>
+</div>
+
+<div id="trad" class="section">
+  <div class="sec-title">DeFi vs Mercado Tradicional</div>
+  <div class="disclaimer"><span>📊</span><span>Benchmarks: Federal Reserve H.15 (13/04/2026) · Bankrate para savings accounts · Macrotrends para S&P 500</span></div>
+  <div class="table-card"><div class="table-header">
+    <div class="table-title">Comparativo — Abril 2026</div>
+    <div class="table-sub">Mercado tradicional vs DeFi — comparação direta em dólar</div>
+  </div>
+  <table><thead><tr><th>Instrumento</th><th>Retorno Anual (USD)</th><th>Liquidez</th><th>Saque</th><th>Risco</th><th>Acesso</th></tr></thead>
+  <tbody>
+    <tr style="opacity:.7"><td class="dim-text"><strong>US T-Bill 1 ano</strong></td><td class="apy-mid">3.70%</td><td class="dim-text">Baixa</td><td class="dim-text">No vencimento</td><td class="dim-text">Governo EUA</td><td class="dim-text">Conta broker EUA</td></tr>
+    <tr style="opacity:.7"><td class="dim-text"><strong>Hi-Yield Savings (EUA)</strong></td><td class="apy-mid">4.0–5.0%</td><td class="dim-text">Alta</td><td class="dim-text">Livre</td><td class="dim-text">Banco (FDIC)</td><td class="dim-text">Conta bancária EUA</td></tr>
+    <tr style="opacity:.7"><td class="dim-text"><strong>S&amp;P 500 (hist. 10a)</strong></td><td class="apy-mid">~11.84% <span style="font-size:10px;color:var(--red)">(volátil)</span></td><td class="dim-text">Alta (D+2)</td><td class="dim-text">D+2 bolsa</td><td class="dim-text">Alta volatilidade</td><td class="dim-text">Conta corretora</td></tr>
+    <tr style="background:rgba(130,46,229,.06);border-top:1px solid rgba(130,46,229,.3)">
+      <td><strong style="color:var(--proto-defi)">Aave V3 (USDT) 🟢 Baixo risco</strong></td>
+      <td><span class="apy-hi" id="aaveApy">—</span></td>
+      <td style="color:var(--green)">24/7 on-chain</td><td style="color:var(--green)">Instantâneo</td>
+      <td style="color:var(--green)">Smart contract auditado</td><td style="color:var(--green)">Carteira cripto</td></tr>
+    <tr style="background:rgba(130,46,229,.06)">
+      <td><strong style="color:var(--proto-defi)">Fluid Lending (USDT) 🟡 Médio risco</strong></td>
+      <td><span class="apy-hi" id="fluidApy">—</span></td>
+      <td style="color:var(--green)">24/7 on-chain</td><td style="color:var(--green)">Instantâneo</td>
+      <td style="color:var(--fdm-yellow)">Smart contract</td><td style="color:var(--green)">Carteira cripto</td></tr>
+    <tr style="background:rgba(130,46,229,.06)">
+      <td><strong style="color:var(--proto-defi)">Convex Finance (USDC-RLUSD) 🟡</strong></td>
+      <td><span class="apy-hi" id="convexApy">—</span></td>
+      <td style="color:var(--green)">24/7 on-chain</td><td style="color:var(--green)">Instantâneo</td>
+      <td style="color:var(--fdm-yellow)">Smart contract</td><td style="color:var(--green)">Carteira cripto</td></tr>
+    <tr style="background:rgba(130,46,229,.08)">
+      <td><strong style="color:var(--proto-defi)">Avantis (USDC) 🟡 Médio risco</strong></td>
+      <td><span class="apy-hi" id="avantisApy">—</span></td>
+      <td style="color:var(--green)">24/7 on-chain</td><td style="color:var(--green)">Instantâneo</td>
+      <td style="color:var(--fdm-yellow)">Perp DEX — fees reais</td><td style="color:var(--green)">Carteira cripto</td></tr>
+  </tbody></table></div>
+  <div class="sec-title" style="margin-top:24px">Simulação $10.000 — 12 meses</div>
+  <div class="kpi-grid" id="tradKpis"></div>
+</div>
+
+
+<div id="brazil" class="section">
+  <div class="sec-title">DeFi vs Mercado Brasileiro 🇧🇷</div>
+  <div class="disclaimer">
+    <span>🇧🇷</span>
+    <span><strong>Contexto para o investidor brasileiro:</strong> A Selic parece alta em BRL (14.75% a.a.), mas descontando IPCA e a depreciação histórica do Real, o retorno real em dólares é bem menor do que parece. Fonte: Banco Central do Brasil (BCB) · Abril 2026</span>
+  </div>
+
+  <!-- Brazil KPIs -->
+  <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:24px">
+    <div class="kpi-card c-green"><div class="kpi-label">Selic atual (BRL)</div><div class="kpi-val green">14.75%</div><div class="kpi-sub">a.a. em reais · Copom</div></div>
+    <div class="kpi-card c-yellow"><div class="kpi-label">IPCA 12 meses</div><div class="kpi-val yellow">4.14%</div><div class="kpi-sub">Inflação acumulada</div></div>
+    <div class="kpi-card c-yellow"><div class="kpi-label">Selic real (BRL)</div><div class="kpi-val yellow">~10.2%</div><div class="kpi-sub">Selic − IPCA</div></div>
+    <div class="kpi-card c-purple"><div class="kpi-label">Selic adj. USD hist.</div><div class="kpi-val purple">~6.5%</div><div class="kpi-sub">Selic − deprec. BRL ~8%/a</div></div>
+    <div class="kpi-card c-blue"><div class="kpi-label">USD/BRL atual</div><div class="kpi-val blue">~5.00</div><div class="kpi-sub">BRL apreciou 15% em 12m</div></div>
+  </div>
+
+  <!-- Explanation -->
+  <div style="background:var(--surf1);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:24px">
+    <div style="font-size:14px;font-weight:600;margin-bottom:16px;color:white">Por que a Selic não é tão boa quanto parece em dólar?</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div>
+        <div style="font-size:12px;color:var(--fdm-yellow);font-weight:600;margin-bottom:8px">O problema da inflação e câmbio</div>
+        <div style="font-size:12px;color:var(--dim);line-height:1.7">
+          A Selic de <strong style="color:var(--green)">14.75%</strong> parece atrativa, mas precisa ser ajustada:<br><br>
+          • IPCA (inflação): <strong style="color:var(--yellow)">−4.14%</strong> → Selic real em BRL = ~10.2%<br>
+          • Historicamente o BRL desvaloriza ~8-10%/a vs USD<br>
+          • Selic em dólar (normalizado): <strong style="color:var(--dim)">~6.5%</strong><br><br>
+          <em style="color:var(--muted)">Nota: Em 2026 o BRL apreciou 15%, tornando o retorno em USD excepcional (~32%) — mas isso é atípico e não deve ser projetado como expectativa recorrente.</em>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--fdm-yellow);font-weight:600;margin-bottom:8px">O argumento DeFi para o brasileiro</div>
+        <div style="font-size:12px;color:var(--dim);line-height:1.7">
+          Com DeFi em USDC/USDT:<br><br>
+          • Rendimento <strong style="color:var(--apy-defi)">2.4%–11%</strong> em dólares americanos<br>
+          • Sem exposição ao câmbio BRL/USD<br>
+          • Sem risco de desvalorização do real<br>
+          • Saque 24h — sem carência, sem IR na fonte<br>
+          • Acesso global sem precisar de conta em banco americano<br><br>
+          <strong style="color:var(--green)">Proteção cambial + yield competitivo</strong> = proposta única para o brasileiro que quer preservar patrimônio em dólar.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison table -->
+  <div class="sec-title">Tabela Comparativa — Brasil vs DeFi vs EUA</div>
+  <div class="table-card">
+    <table><thead><tr>
+      <th>Instrumento</th><th>Retorno BRL</th><th>Retorno USD (adj.)</th><th>Inflação</th><th>Liquidez</th><th>Câmbio</th><th>Acessibilidade</th>
+    </tr></thead>
+    <tbody>
+      <tr><td><strong>Tesouro Selic 2028</strong></td><td style="color:var(--green)">14.75% a.a.</td><td style="color:var(--fdm-yellow)">~6.5% (hist.)</td><td style="color:var(--red)">−4.14%</td><td class="dim-text">Diária (D+1)</td><td style="color:var(--red)">Risco deprec.</td><td class="dim-text">CPF + conta BR</td></tr>
+      <tr><td><strong>Tesouro IPCA+ 2029</strong></td><td style="color:var(--green)">IPCA + 7.72%</td><td style="color:var(--fdm-yellow)">~7-8% (est.)</td><td style="color:var(--green)">Protegido</td><td class="dim-text">Marcação a mercado</td><td style="color:var(--red)">Risco deprec.</td><td class="dim-text">CPF + conta BR</td></tr>
+      <tr><td><strong>CDB 100% CDI</strong></td><td style="color:var(--green)">14.65% a.a.</td><td style="color:var(--fdm-yellow)">~6.0% (hist.)</td><td style="color:var(--red)">−4.14%</td><td class="dim-text">D+0 ou prazo</td><td style="color:var(--red)">Risco deprec.</td><td class="dim-text">CPF + conta BR</td></tr>
+      <tr><td><strong>US T-Bill 1 ano</strong></td><td class="dim-text">— (USD)</td><td style="color:var(--blue)">3.70% a.a.</td><td class="dim-text">EUA 2.4%</td><td class="dim-text">No vencimento</td><td style="color:var(--green)">USD puro</td><td class="dim-text">Conta broker EUA</td></tr>
+      <tr style="background:rgba(130,46,229,.06);border-top:1px solid rgba(130,46,229,.3)">
+        <td><strong style="color:var(--proto-defi)">Aave V3 (USDT) 🟢</strong></td>
+        <td style="color:var(--dim)">USD direto</td><td><span class="apy-hi" id="brAaveApy">—</span></td>
+        <td class="dim-text">N/A (USD)</td><td style="color:var(--green)">24h on-chain</td>
+        <td style="color:var(--green)">USD puro</td><td style="color:var(--green)">Carteira cripto</td></tr>
+      <tr style="background:rgba(130,46,229,.06)">
+        <td><strong style="color:var(--proto-defi)">Fluid Lending (USDT) 🟡</strong></td>
+        <td style="color:var(--dim)">USD direto</td><td><span class="apy-hi" id="brFluidApy">—</span></td>
+        <td class="dim-text">N/A (USD)</td><td style="color:var(--green)">24h on-chain</td>
+        <td style="color:var(--green)">USD puro</td><td style="color:var(--green)">Carteira cripto</td></tr>
+      <tr style="background:rgba(130,46,229,.06)">
+        <td><strong style="color:var(--proto-defi)">Convex Finance (USDC) 🟡</strong></td>
+        <td style="color:var(--dim)">USD direto</td><td><span class="apy-hi" id="brConvexApy">—</span></td>
+        <td class="dim-text">N/A (USD)</td><td style="color:var(--green)">24h on-chain</td>
+        <td style="color:var(--green)">USD puro</td><td style="color:var(--green)">Carteira cripto</td></tr>
+      <tr style="background:rgba(130,46,229,.08)">
+        <td><strong style="color:var(--proto-defi)">Avantis (USDC / Base) 🟡</strong></td>
+        <td style="color:var(--dim)">USD direto</td><td><span class="apy-hi" id="brAvantisApy">—</span></td>
+        <td class="dim-text">N/A (USD)</td><td style="color:var(--green)">24h on-chain</td>
+        <td style="color:var(--green)">USD puro</td><td style="color:var(--green)">Carteira cripto</td></tr>
+    </tbody></table>
+  </div>
+
+  <!-- $10k simulation Brazil -->
+  <div class="sec-title" style="margin-top:24px">Simulação $10.000 convertidos em BRL — 12 meses</div>
+  <div id="brSimKpis" class="kpi-grid"></div>
+
+  <div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:14px 18px;margin-top:16px;font-size:12px;color:var(--green);line-height:1.6">
+    <strong>Nota metodológica:</strong> Para o investidor brasileiro que converte BRL→USD→DeFi: o retorno total inclui o yield DeFi em dólares + variação cambial BRL/USD. Se o BRL desvalorizar (cenário histórico mais provável), o retorno total em BRL é ainda maior. Se o BRL apreciar (como em 2026), o retorno em BRL é menor. O DeFi funciona como <strong>hedge cambial natural</strong> para o investidor brasileiro.
+  </div>
+</div>
+
+</div>
+
+<div class="footer"><strong style="color:var(--apy-defi)">Formadores de Mercado</strong> &nbsp;·&nbsp; Renda Passiva On-chain &nbsp;·&nbsp; Dados: <a href="https://defillama.com/yields" target="_blank" style="color:var(--apy-defi)">DeFiLlama API</a> · Federal Reserve H.15 · Bankrate &nbsp;·&nbsp; Não constitui recomendação de investimento</div>
+
+<script>
+const LIVE_POOLS=[
+  {project:"maple",symbol:"USDC",chain:"Ethereum",apy:4.25,apy30d:4.33,tvlM:3387.7,url:"https://app.maple.finance/earn"},
+  {project:"maple",symbol:"USDT",chain:"Ethereum",apy:3.65,apy30d:3.77,tvlM:2469.7,url:"https://app.maple.finance/earn"},
+  {project:"aave-v3",symbol:"USDT",chain:"Ethereum",apy:2.41,apy30d:2.06,tvlM:965.9,url:"https://app.aave.com/markets/"},
+  {project:"spark-savings",symbol:"USDT",chain:"Ethereum",apy:3.2,apy30d:3.22,tvlM:870.3,url:"https://spark.fi/savings"},
+  {project:"aave-v3",symbol:"USDC",chain:"Ethereum",apy:2.44,apy30d:2.31,tvlM:684.4,url:"https://app.aave.com/markets/"},
+  {project:"spark-savings",symbol:"USDC",chain:"Ethereum",apy:3.75,apy30d:3.75,tvlM:405.6,url:"https://spark.fi/savings"},
+  {project:"fluid-lending",symbol:"USDC",chain:"Ethereum",apy:4.01,apy30d:4.33,tvlM:188.8,url:"https://fluid.instadapp.io/lending/"},
+  {project:"fluid-lending",symbol:"USDT",chain:"Ethereum",apy:4.61,apy30d:4.92,tvlM:130.1,url:"https://fluid.instadapp.io/lending/"},
+  {project:"compound-v3",symbol:"USDC",chain:"Ethereum",apy:2.65,apy30d:2.57,tvlM:111.2,url:"https://app.compound.finance/"},
+  {project:"aave-v3",symbol:"USDC",chain:"Arbitrum",apy:1.63,apy30d:1.54,tvlM:93.3,url:"https://app.aave.com/markets/"},
+  {project:"curve-dex",symbol:"USDC-RLUSD",chain:"Ethereum",apy:5.02,apy30d:5.63,tvlM:90.7,url:"https://curve.fi/#/ethereum/pools"},
+  {project:"aave-v3",symbol:"USDC",chain:"Base",apy:2.73,apy30d:2.61,tvlM:79.7,url:"https://app.aave.com/markets/"},
+  {project:"sparklend",symbol:"USDT",chain:"Ethereum",apy:2.39,apy30d:1.96,tvlM:72.9,url:"https://app.spark.fi/markets/"},
+  {project:"compound-v3",symbol:"USDT",chain:"Ethereum",apy:2.6,apy30d:2.54,tvlM:64.5,url:"https://app.compound.finance/"},
+  {project:"avantis",symbol:"USDC",chain:"Base",apy:11.16,apy30d:9.52,tvlM:62.2,url:"https://www.avantisfi.com/"},
+  {project:"curve-dex",symbol:"SUSDS-USDT",chain:"Ethereum",apy:3.34,apy30d:1.78,tvlM:50.0,url:"https://curve.fi/#/ethereum/pools"},
+  {project:"curve-dex",symbol:"PYUSD-USDC",chain:"Ethereum",apy:4.84,apy30d:5.6,tvlM:47.3,url:"https://curve.fi/#/ethereum/pools"},
+  {project:"goldfinch",symbol:"USDC",chain:"Ethereum",apy:10.06,apy30d:10.03,tvlM:37.2,url:"https://app.goldfinch.finance/earn"},
+  {project:"fluid-lending",symbol:"USDC",chain:"Arbitrum",apy:5.34,apy30d:5.99,tvlM:32.8,url:"https://fluid.instadapp.io/lending/"},
+  {project:"yearn-finance",symbol:"USDC",chain:"Ethereum",apy:3.48,apy30d:3.25,tvlM:28.5,url:"https://yearn.fi/"},
+  {project:"euler-v2",symbol:"USDC",chain:"Ethereum",apy:3.79,apy30d:3.59,tvlM:28.3,url:"https://app.euler.finance/"},
+  {project:"yo-protocol",symbol:"USDC",chain:"Base",apy:16.93,apy30d:14.1,tvlM:27.6,url:"https://yo.xyz/"},
+  {project:"merkl",symbol:"USDC",chain:"Ethereum",apy:3.82,apy30d:4.86,tvlM:27.0,url:"https://app.merkl.xyz/"},
+  {project:"uniswap-v3",symbol:"USDC-USDT",chain:"Ethereum",apy:1.76,apy30d:1.89,tvlM:23.1,url:"https://app.uniswap.org/"},
+  {project:"dolomite",symbol:"USDC",chain:"Ethereum",apy:3.66,apy30d:5.74,tvlM:22.1,url:"https://dolomite.io/"},
+  {project:"convex-finance",symbol:"USDC-RLUSD",chain:"Ethereum",apy:8.46,apy30d:5.83,tvlM:15.3,url:"https://www.convexfinance.com/stake"},
+  {project:"zerobase-cedefi",symbol:"USDT",chain:"Ethereum",apy:9,apy30d:9,tvlM:14.4,url:"https://app.zerobase.pro/en"},
+  {project:"termmax",symbol:"USDC",chain:"Ethereum",apy:2.3,apy30d:1.86,tvlM:11.2,url:"https://ts.finance/termmax/"},
+  {project:"lazy-summer-protocol",symbol:"USDC",chain:"Ethereum",apy:3.86,apy30d:3.54,tvlM:11.0,url:"https://summer.fi/"},
+  {project:"yo-protocol",symbol:"USDC",chain:"Ethereum",apy:16.93,apy30d:14.11,tvlM:11.0,url:"https://yo.xyz/"}
+];
+const RISK_META={
+  "maple":["🔴","Alto","Crédito privado institucional — lockup, risco de inadimplência"],
+  "aave-v3":["🟢","Baixo","Líder DeFi lending, 14+ redes, auditado desde 2020, TVL $10B+"],
+  "spark-savings":["🟢","Baixo","MakerDAO/Sky savings rate, lastreado em DAI/USDS"],
+  "fluid-lending":["🟡","Médio","Lending+DEX híbrido — protocolo mais recente"],
+  "compound-v3":["🟢","Baixo","Pioneiro lending DeFi 2018, modelo conservador"],
+  "curve-dex":["🟡","Médio","Stable pools clássicos, incentivos CRV variáveis"],
+  "avantis":["🟡","Médio","Perp DEX Base — LPs ganham fees de trading"],
+  "euler-v2":["🟡","Médio","Mercados isolados permissionless — menor histórico"],
+  "goldfinch":["🔴","Alto","Crédito privado p/ mercados emergentes — default risk"],
+  "yo-protocol":["🔴","Alto","Novo em Base, APY alto com menor histórico"],
+  "yearn-finance":["🟡","Médio","Yield aggregator automático desde 2020"],
+};
+function getRisk(p){return RISK_META[p]||["🟡","Médio","Protocolo DeFi"];}
+const RC={"Baixo":"risk-low","Médio":"risk-med","Alto":"risk-high"};
+// Escala de cor para APY: alto=verde, médio=branco quente, baixo=cinza
+function apySpan(apy){
+  const col=apy>=8?'var(--green)':apy>=4?'var(--text)':'var(--dim)';
+  return `<span style="color:${col};font-weight:700;font-size:14px">${apy.toFixed(2)}%</span>`;
+}
+function chain(c){const m={Ethereum:"ch-eth",Base:"ch-base",Arbitrum:"ch-arb"};return`<span class="chain-tag ${m[c]||'ch-eth'}">${{Ethereum:"ETH",Base:"BASE",Arbitrum:"ARB"}[c]||c}</span>`;}
+function pN(p){return p.replace(/-v[23]$/,'').replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());}
+function fmtTVL(v){return v>=1000?`$${(v/1000).toFixed(1)}B`:`$${v.toFixed(0)}M`;}
+
+// ── MARKET DATA — benchmark tradicional ──────────────────────
+// Gerado pelo refresh_data.py (BCB + Federal Reserve)
+// Atualizar: python3 refresh_data.py
+const MARKET_DATA = window.__MARKET_DATA__ || {
+  tbill_1y:3.7, tbond_10y:4.3, tbill_3m:3.71,
+  hi_yield_savings:4.5, sofr:4.1, sp500_hist_10y:11.84,
+  selic_meta:14.75, cdi_annual:14.65,
+  ipca_12m:4.14, usd_brl:4.9928,
+  selic_usd_hist:6.75, selic_real_brl:10.19,
+  updated_at:"2026-04-16T09:28:32.875128+00:00"
+};
+
+// ── TABELA DE PROTOCOLOS — funções globais ──────────────────
+let curSort='tvl',curFilter='all';
+function renderFull(){
+  let d=[...LIVE_POOLS];
+  if(curFilter!=='all'&&curFilter!=='low')d=d.filter(p=>p.chain===curFilter);
+  if(curFilter==='low')d=d.filter(p=>getRisk(p.project)[1]==='Baixo');
+  if(curSort==='apy')d.sort((a,b)=>b.apy-a.apy);else d.sort((a,b)=>b.tvlM-a.tvlM);
+  const tbl=document.getElementById('fullTable');
+  if(!tbl)return;
+  tbl.innerHTML=d.map(p=>{
+    const[ri,rl,rd]=getRisk(p.project);
+    return`<tr><td><div class="proto-cell"><div class="proto-icon">🏦</div><div><div class="proto-name">${pN(p.project)}</div></div></div></td><td><strong style="color:var(--dim)">${p.symbol}</strong></td><td>${chain(p.chain)}</td><td>${apySpan(p.apy)}</td><td class="dim-text">${p.apy30d.toFixed(2)}%</td><td class="tvl-val">${fmtTVL(p.tvlM)}</td><td><span class="risk-badge ${RC[rl]}">${ri} ${rl}</span></td><td style="font-size:11px;color:var(--dim);max-width:200px">${rd}</td><td><a href="${p.url}" target="_blank" class="link-btn">↗ Abrir</a></td></tr>`;
+  }).join('');
+}
+function filterTbl(f,btn){
+  curFilter=f;
+  document.querySelectorAll('#protocols .fbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFull();
+}
+function sortTbl(s){curSort=s;renderFull();}
+
+// Inicializar e também re-inicializar após refresh de dados
+function initDashboard(){
+  document.getElementById('updateTs').textContent=
+    (MARKET_DATA.updated_at
+      ? new Date(MARKET_DATA.updated_at).toLocaleString('pt-BR')
+      : new Date().toLocaleString('pt-BR'));
+
+// KPIs
+const _safeForKpi=LIVE_POOLS.filter(p=>!["maple","goldfinch","yo-protocol"].includes(p.project));
+const bestApy=Math.max(..._safeForKpi.map(p=>p.apy));
+const bestPool=_safeForKpi.find(p=>p.apy===bestApy);
+const safePools=LIVE_POOLS.filter(p=>!["maple","goldfinch","yo-protocol"].includes(p.project));
+const safePool=safePools.reduce((a,b)=>a.apy>b.apy?a:b);
+const totalTVL=LIVE_POOLS.reduce((s,p)=>s+p.tvlM,0);
+const sim10k=Math.round(10000*(Math.pow(1+safePool.apy/100/12,12)-1));
+document.getElementById('kpiGrid').innerHTML=[
+  ['c-purple','purple',`${bestApy.toFixed(2)}%`,'Melhor APY Atual',`${pN(bestPool.project)} (${bestPool.symbol})`,'Fonte: DeFiLlama live'],
+  ['c-yellow','yellow',`${safePool.apy.toFixed(2)}%`,'Risk-Adjusted Ideal',`${pN(safePool.project)} (${safePool.symbol})`,'Risco baixo/médio'],
+  ['c-green','green',`+$${sim10k.toLocaleString()}`,'Simulação $10k / 12m','Rendimento estimado',`vs +$370 em T-Bill 1 ano`],
+  ['c-blue','blue',`$${(totalTVL/1000).toFixed(1)}B`,'TVL Total Mapeado',`${LIVE_POOLS.length} pools selecionados`,'Ethereum, Base, Arbitrum'],
+].map(([cls,vc,val,lbl,sub,note])=>`<div class="kpi-card ${cls}"><div class="kpi-label">${lbl}</div><div class="kpi-val ${vc}">${val}</div><div class="kpi-sub">${sub}</div><div class="kpi-sub" style="font-size:10px;color:var(--muted)">${note}</div></div>`).join('');
+
+// Bar chart
+const MAX_APY=Math.max(bestApy,14);
+const HIGH_RISK_PROJ=new Set(["maple","goldfinch","yo-protocol"]);
+const chartDefi=LIVE_POOLS.filter(p=>!HIGH_RISK_PROJ.has(p.project))
+  .reduce((acc,p)=>{if(!acc.find(a=>a.project===p.project&&a.chain===p.chain))acc.push(p);return acc;},[])
+  .sort((a,b)=>b.apy-a.apy).slice(0,7);
+// TradFi usa MARKET_DATA (live ou fallback)
+// Mesmo conjunto do PDF: renda fixa em USD + Selic adj. USD
+// S&P 500 removido — não é renda passiva/estável, confunde o argumento
+const tradRows=[
+  {name:"US T-Bill 1 ano",      apy:MARKET_DATA.tbill_1y,        apy30d:MARKET_DATA.tbill_1y,        defi:false},
+  {name:"US T-Bond 10 anos",    apy:MARKET_DATA.tbond_10y,       apy30d:MARKET_DATA.tbond_10y,       defi:false},
+  {name:"Hi-Yield Savings EUA", apy:MARKET_DATA.hi_yield_savings,apy30d:MARKET_DATA.hi_yield_savings,defi:false},
+  {name:"Selic adj. USD (hist.)",apy:MARKET_DATA.selic_usd_hist, apy30d:MARKET_DATA.selic_usd_hist,  defi:false},
+];
+const allRows=[...chartDefi.map(p=>({name:`${pN(p.project)} (${p.symbol})`,apy:p.apy,apy30d:p.apy30d,defi:true})),null,...tradRows];
+document.getElementById('barChart').innerHTML=allRows.map(r=>{
+  if(!r)return`<div style="border-top:1px solid var(--border);margin:6px 0;padding:4px 0;text-align:center;font-size:10px;color:var(--muted)">── Mercado Tradicional abaixo ──</div>`;
+  const p=(r.apy/MAX_APY*100).toFixed(1);
+  const p30=(r.apy30d/MAX_APY*100).toFixed(1);
+  // Selic adj. USD recebe classe e badge próprios para diferenciar de TradFi puro
+  const isSelic = r.name && r.name.includes('Selic');
+  const cls = r.defi ? 'defi' : (isSelic ? 'trad-selic' : 'trad-low');
+  const bdg = r.defi
+    ? `<span class="bar-badge defi">DeFi</span>`
+    : (isSelic
+        ? `<span class="bar-badge brl">BRL→USD</span>`
+        : `<span class="bar-badge trad">TradFi</span>`);
+  return`<div class="bar-row"><div class="bar-label ${r.defi?'':'trad'}">${r.name}</div><div class="bar-track">${r.defi?`<div class="bar-30" style="width:${p30}%"></div>`:''}<div class="bar-fill ${cls}" style="width:${p}%">${r.apy.toFixed(2)}%</div></div>${bdg}</div>`;
+}).join('');
+
+// Quick table — top 5 safe
+const top5=[...safePools].sort((a,b)=>b.apy-a.apy).slice(0,5);
+document.getElementById('quickTable').innerHTML=top5.map(p=>{
+  const[ri,rl,rd]=getRisk(p.project);
+  return`<tr><td><div class="proto-cell"><div class="proto-icon">💰</div><div><div class="proto-name">${pN(p.project)}</div><div class="proto-sub">${rd.substring(0,48)}…</div></div></div></td><td>${chain(p.chain)} <span style="color:var(--dim);font-size:12px">${p.symbol}</span></td><td>${chain(p.chain)}</td><td>${apySpan(p.apy)}</td><td class="dim-text">${p.apy30d.toFixed(2)}%</td><td class="tvl-val">${fmtTVL(p.tvlM)}</td><td><span class="risk-badge ${RC[rl]}">${ri} ${rl}</span></td><td><a href="${p.url}" target="_blank" class="link-btn">↗ Abrir</a></td></tr>`;
+}).join('');
+
+// Full table — chama renderFull() global (definida fora)
+  renderFull();
+
+// Simulator — popular select apenas se ainda vazio (evita duplicatas em re-init)
+const sel=document.getElementById('protoSel');
+if(sel.options.length===0){
+  LIVE_POOLS.forEach(p=>{const o=document.createElement('option');o.value=p.apy;o.textContent=`${pN(p.project)} (${p.symbol}/${p.chain}) — ${p.apy.toFixed(2)}%`;sel.appendChild(o);});
+}
+calcSim();
+
+// Risk matrix — usa renderRiskMatrix() global
+renderRiskMatrix();
+
+// Trad comparison — inclui protocolos de alto yield para narrativa forte
+const aavePool=LIVE_POOLS.find(p=>p.project==='aave-v3'&&p.symbol==='USDT');
+const fluidPool=LIVE_POOLS.find(p=>p.project==='fluid-lending'&&p.symbol==='USDT');
+const convexPool=LIVE_POOLS.find(p=>p.project==='convex-finance');
+const avantisPool=LIVE_POOLS.find(p=>p.project==='avantis');
+if(aavePool)   document.getElementById('aaveApy').textContent=aavePool.apy.toFixed(2)+'%';
+if(fluidPool)  document.getElementById('fluidApy').textContent=fluidPool.apy.toFixed(2)+'%';
+if(convexPool) document.getElementById('convexApy').textContent=convexPool.apy.toFixed(2)+'%';
+if(avantisPool)document.getElementById('avantisApy').textContent=avantisPool.apy.toFixed(2)+'%';
+const aaveApy   =(aavePool?.apy||2.4)/100;
+const fluidApy  =(fluidPool?.apy||5.3)/100;
+const convexApy =(convexPool?.apy||8.85)/100;
+const avantisApy=(avantisPool?.apy||11.02)/100;
+document.getElementById('tradKpis').innerHTML=[
+  ['c-blue','blue',
+    `$${Math.round(10000*MARKET_DATA.tbill_1y/100).toLocaleString()}`,
+    `T-Bill 1 ano (${MARKET_DATA.tbill_1y}%) 🔵 Trad.`,
+    '$10.000 × 12m · referência EUA'],
+  ['c-yellow','yellow',
+    `$${Math.round(10000*MARKET_DATA.hi_yield_savings/100).toLocaleString()}`,
+    `Hi-Yield Savings (~${MARKET_DATA.hi_yield_savings}%) 🟡 Trad.`,
+    '$10.000 × 12m · melhor poupança EUA'],
+  ['c-purple','purple',`$${Math.round(10000*(Math.pow(1+aaveApy/12,12)-1)).toLocaleString()}`,
+    `Aave V3 USDT (${aavePool?.apy.toFixed(2)||'2.40'}%) 🟢 DeFi`,'$10.000 × 12m · risco baixo'],
+  ['c-green','green',`$${Math.round(10000*(Math.pow(1+fluidApy/12,12)-1)).toLocaleString()}`,
+    `Fluid USDT (${fluidPool?.apy.toFixed(2)||'5.30'}%) 🟡 DeFi`,'$10.000 × 12m · risco médio'],
+  ['c-green','green',`$${Math.round(10000*(Math.pow(1+convexApy/12,12)-1)).toLocaleString()}`,
+    `Convex Finance (${convexPool?.apy.toFixed(2)||'8.85'}%) 🟡 DeFi`,'$10.000 × 12m · risco médio'],
+  ['c-purple','purple',`$${Math.round(10000*(Math.pow(1+avantisApy/12,12)-1)).toLocaleString()}`,
+    `Avantis (${avantisPool?.apy.toFixed(2)||'11.02'}%) 🟡 DeFi`,'$10.000 × 12m · maior rendimento'],
+].map(([cls,vc,val,lbl,note])=>`<div class="kpi-card ${cls}"><div class="kpi-label">${lbl}</div><div class="kpi-val ${vc}">${val}</div><div class="kpi-sub">${note}</div></div>`).join('');
+
+} // fim initDashboard()
+
+// ── SIMULADOR — funções globais (acessíveis via onclick no HTML) ──────────────
+function syncApy(){
+  const sel=document.getElementById('protoSel');
+  document.getElementById('apyRange').value=sel.value;
+  document.getElementById('apyDisp').textContent=parseFloat(sel.value).toFixed(2);
+  calcSim();
+}
+function calcSim(){
+  const cap=parseFloat(document.getElementById('capital').value)||10000;
+  const apy=parseFloat(document.getElementById('apyRange').value)||5;
+  const mos=parseInt(document.getElementById('horizSel').value)||12;
+  const n=parseInt(document.getElementById('compSel').value)||12;
+  const fin=cap*Math.pow(1+apy/100/n,n*(mos/12));
+  const yld=fin-cap;const mnth=yld/mos;
+  const tbill=cap*(Math.pow(1+MARKET_DATA.tbill_1y/100/12,mos)-1);
+  document.getElementById('rYield').textContent=`$${Math.round(yld).toLocaleString()}`;
+  document.getElementById('rPct').textContent=`+${(yld/cap*100).toFixed(2)}%`;
+  document.getElementById('rBal').textContent=`$${Math.round(fin).toLocaleString()}`;
+  document.getElementById('rMo').textContent=`$${Math.round(mnth).toLocaleString()}`;
+  document.getElementById('rMoPct').textContent=`~${(apy/12).toFixed(2)}%/mês`;
+  document.getElementById('rVs').textContent=`+$${Math.round(yld-tbill).toLocaleString()}`;
+  let bal=cap,acc=0,rows='';
+  const mr=Math.pow(1+apy/100/n,n/12)-1;
+  for(let m=1;m<=mos;m++){const int=bal*mr;bal+=int;acc+=int;rows+=`<tr><td style="color:var(--muted)">Mês ${m}</td><td style="font-weight:600">$${Math.round(bal).toLocaleString()}</td><td style="color:var(--apy-defi)">+$${Math.round(int).toLocaleString()}</td><td style="color:var(--blue)">$${Math.round(acc).toLocaleString()}</td><td style="color:var(--dim)">+${((bal-cap)/cap*100).toFixed(2)}%</td></tr>`;}
+  document.getElementById('projBody').innerHTML=rows;
+  drawGrowthChart(cap, apy, mos, n);
+}
+
+function drawGrowthChart(cap, apy, mos, n){
+  const canvas = document.getElementById('growthChart');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  // Retina
+  const dpr = window.devicePixelRatio||1;
+  canvas.width  = canvas.offsetWidth  * dpr;
+  canvas.height = canvas.offsetHeight * dpr;
+  ctx.scale(dpr, dpr);
+  const W = canvas.offsetWidth, H = canvas.offsetHeight;
+  const PAD = {t:16, r:20, b:36, l:64};
+  const CW = W - PAD.l - PAD.r, CH = H - PAD.t - PAD.b;
+
+  // Pontos
+  const defiBals=[], tbillBals=[];
+  const mr   = Math.pow(1+apy/100/n, n/12)-1;
+  const tbMr = MARKET_DATA.tbill_1y/100/12;
+  let d=cap, t=cap;
+  defiBals.push(cap); tbillBals.push(cap);
+  for(let m=1;m<=mos;m++){
+    d+=d*mr; defiBals.push(d);
+    t+=t*tbMr; tbillBals.push(t);
+  }
+  const maxVal = Math.max(...defiBals);
+  const minVal = cap;
+  const range  = maxVal - minVal || 1;
+
+  const xPos = i => PAD.l + (i/mos)*CW;
+  const yPos = v => PAD.t + CH - ((v-minVal)/range)*CH;
+
+  // Fundo
+  ctx.fillStyle='#120c24';
+  ctx.fillRect(0,0,W,H);
+
+  // Grid horizontal
+  const ticks = 4;
+  for(let i=0;i<=ticks;i++){
+    const v = minVal + (range/ticks)*i;
+    const y = yPos(v);
+    ctx.strokeStyle='rgba(46,31,74,.5)';
+    ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(PAD.l,y); ctx.lineTo(W-PAD.r,y); ctx.stroke();
+    ctx.fillStyle='#8b70b8'; ctx.font=`10px Sora,sans-serif`; ctx.textAlign='right';
+    ctx.fillText('$'+Math.round(v).toLocaleString(), PAD.l-6, y+4);
+  }
+
+  // Eixo X — meses
+  const step = mos <= 12 ? 1 : mos <= 24 ? 2 : 3;
+  for(let m=0;m<=mos;m+=step){
+    ctx.fillStyle='#6b7280'; ctx.font='9px Sora,sans-serif'; ctx.textAlign='center';
+    ctx.fillText(m===0?'Hoje':`M${m}`, xPos(m), H-PAD.b+14);
+  }
+
+  // Área T-Bill (fill)
+  ctx.beginPath();
+  tbillBals.forEach((v,i)=>{ i===0?ctx.moveTo(xPos(i),yPos(v)):ctx.lineTo(xPos(i),yPos(v)); });
+  ctx.lineTo(xPos(mos), yPos(minVal)); ctx.lineTo(xPos(0), yPos(minVal));
+  ctx.closePath();
+  ctx.fillStyle='rgba(75,85,99,.15)'; ctx.fill();
+
+  // Linha T-Bill
+  ctx.beginPath();
+  tbillBals.forEach((v,i)=>{ i===0?ctx.moveTo(xPos(i),yPos(v)):ctx.lineTo(xPos(i),yPos(v)); });
+  ctx.strokeStyle='#4b5563'; ctx.lineWidth=1.5; ctx.setLineDash([4,4]); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Área DeFi (fill gradiente)
+  const grad = ctx.createLinearGradient(0, PAD.t, 0, H-PAD.b);
+  grad.addColorStop(0,'rgba(130,46,229,.35)');
+  grad.addColorStop(1,'rgba(130,46,229,.04)');
+  ctx.beginPath();
+  defiBals.forEach((v,i)=>{ i===0?ctx.moveTo(xPos(i),yPos(v)):ctx.lineTo(xPos(i),yPos(v)); });
+  ctx.lineTo(xPos(mos), yPos(minVal)); ctx.lineTo(xPos(0), yPos(minVal));
+  ctx.closePath();
+  ctx.fillStyle=grad; ctx.fill();
+
+  // Linha DeFi
+  ctx.beginPath();
+  defiBals.forEach((v,i)=>{ i===0?ctx.moveTo(xPos(i),yPos(v)):ctx.lineTo(xPos(i),yPos(v)); });
+  ctx.strokeStyle='#822ee5'; ctx.lineWidth=2.5; ctx.stroke();
+
+  // Ponto final DeFi + label
+  const lastX = xPos(mos), lastY = yPos(defiBals[mos]);
+  ctx.beginPath(); ctx.arc(lastX, lastY, 5, 0, Math.PI*2);
+  ctx.fillStyle='#822ee5'; ctx.fill();
+  ctx.fillStyle='#f0eaf8'; ctx.font='bold 11px Sora,sans-serif'; ctx.textAlign='center';
+  ctx.fillText('$'+Math.round(defiBals[mos]).toLocaleString(), lastX, lastY-10);
+
+  // Label diferença
+  const diff = Math.round(defiBals[mos]-tbillBals[mos]);
+  if(diff>0){
+    const midX = xPos(Math.floor(mos*0.55));
+    const midY = yPos((defiBals[Math.floor(mos*0.55)]+tbillBals[Math.floor(mos*0.55)])/2);
+    ctx.fillStyle='rgba(130,46,229,.9)'; ctx.beginPath();
+    ctx.roundRect?.(midX-34,midY-10,68,20,4)||ctx.rect(midX-34,midY-10,68,20);
+    ctx.fill();
+    ctx.fillStyle='#fff'; ctx.font='bold 10px Sora,sans-serif'; ctx.textAlign='center';
+    ctx.fillText('+$'+diff.toLocaleString()+' extra', midX, midY+4);
+  }
+
+  // Legenda
+  ctx.fillStyle='#822ee5'; ctx.fillRect(PAD.l,4,24,8); ctx.beginPath();
+  ctx.fillStyle='#c4b5d8'; ctx.font='10px Sora,sans-serif'; ctx.textAlign='left';
+  ctx.fillText('DeFi ('+apy.toFixed(1)+'% APY)', PAD.l+28, 13);
+  ctx.fillStyle='#4b5563'; ctx.fillRect(PAD.l+130,4,24,8);
+  ctx.fillStyle='#9ca3af'; ctx.fillText('T-Bill ('+MARKET_DATA.tbill_1y+'%)', PAD.l+158, 13);
+}
+
+// ── MATRIZ RISCO × RETORNO — funções globais ─────────────────
+let riskFilter='all', riskSort='apy';
+
+function filterRiskMatrix(level){
+  riskFilter=level;
+  document.querySelectorAll('.risk-filter-btn').forEach(b=>b.classList.remove('active'));
+  const idMap={all:'rf-all',Baixo:'rf-low','Médio':'rf-med',Alto:'rf-high'};
+  const btn=document.getElementById(idMap[level]);
+  if(btn)btn.classList.add('active');
+  renderRiskMatrix();
+}
+
+function sortRiskMatrix(col){
+  riskSort=col;
+  ['score','apy','apy30','tvl'].forEach(c=>{
+    const el=document.getElementById('rs-'+c);
+    if(el)el.textContent=c===col?'↓':'';
+  });
+  renderRiskMatrix();
+}
+
+function renderRiskMatrix(){
+  const SCORE={'Baixo':5,'Médio':4,'Alto':2};
+  let data=LIVE_POOLS.reduce((acc,p)=>{if(!acc.find(a=>a.project===p.project))acc.push(p);return acc;},[]);
+  if(riskFilter!=='all')data=data.filter(p=>getRisk(p.project)[1]===riskFilter);
+  if(riskSort==='apy')    data.sort((a,b)=>b.apy-a.apy);
+  else if(riskSort==='apy30') data.sort((a,b)=>b.apy30d-a.apy30d);
+  else if(riskSort==='tvl')   data.sort((a,b)=>b.tvlM-a.tvlM);
+  else if(riskSort==='score') data.sort((a,b)=>{
+    const sa=SCORE[getRisk(a.project)[1]]||3,sb=SCORE[getRisk(b.project)[1]]||3;
+    return sb!==sa?sb-sa:b.apy-a.apy;
+  });
+  const tbl=document.getElementById('riskMatrix');
+  if(!tbl)return;
+  tbl.innerHTML=data.map(p=>{
+    const[ri,rl,rd]=getRisk(p.project);
+    const stars=rl==='Baixo'?'⭐⭐⭐⭐⭐':rl==='Médio'?'⭐⭐⭐⭐':'⭐⭐';
+    return`<tr><td><strong>${pN(p.project)}</strong></td><td><span class="risk-badge ${RC[rl]}">${ri} ${rl}</span></td><td>${stars}</td><td>${apySpan(p.apy)}</td><td class="dim-text">${p.apy30d.toFixed(2)}%</td><td class="tvl-val">${fmtTVL(p.tvlM)}</td><td style="font-size:11px;color:var(--dim)">${rd}</td><td><a href="${p.url}" target="_blank" class="link-btn">↗</a></td></tr>`;
+  }).join('');
+}
+
+// ── LIGHT / DARK MODE ────────────────────────────────────────
+function toggleTheme(){
+  const html = document.documentElement;
+  const isLight = html.getAttribute('data-theme')==='light';
+  html.setAttribute('data-theme', isLight ? '' : 'light');
+  document.getElementById('btnMode').textContent = isLight ? '☀️ Light' : '🌙 Dark';
+  localStorage.setItem('fdm-theme', isLight ? 'dark' : 'light');
+}
+// Restaurar preferência salva
+(function(){
+  const saved = localStorage.getItem('fdm-theme');
+  if(saved==='light'){
+    document.documentElement.setAttribute('data-theme','light');
+    // Atualizar botão após DOM carregar
+    window.addEventListener('DOMContentLoaded', ()=>{
+      const btn = document.getElementById('btnMode');
+      if(btn) btn.textContent = '🌙 Dark';
+    });
+  }
+})();
+
+// ── REFRESH DE DADOS ─────────────────────────────────────────
+// Busca diretamente da API DeFiLlama no browser (sem servidor)
+async function refreshData(){
+  const btn = document.getElementById('btnRefresh');
+  const icon = document.getElementById('refreshIcon');
+  btn.classList.add('loading');
+  icon.classList.add('spin');
+  btn.disabled = true;
+
+  try {
+    // Buscar pools DeFiLlama diretamente no browser via CORS
+    const resp = await fetch('https://yields.llama.fi/pools');
+    const data = await resp.json();
+    const pools = data.data || [];
+
+    const STABLE = new Set(['USDT','USDC','USDC.E','USDBC']);
+    const EXCL_PROJ = new Set(['maple','goldfinch','yo-protocol']);
+    const EXCL_SYM  = new Set(['WBTC.B-USDC','WBTC-USDC','WBTC-USDT']);
+    const CHAINS = new Set(['Ethereum','Base','Arbitrum','Optimism']);
+    const EXCL_TOKENS = new Set(['WETH','ETH','WBTC','BTC','SOL','ARB','OP','MATIC',
+                                  'AERO','CBBTC','TBTC','FRAX','CRVUSD','GHO','USDE']);
+
+    const filtered = [];
+    const seen = {};
+    for(const p of pools){
+      const parts = p.symbol.toUpperCase().replace(/-|\//g,'_').split('_');
+      const hasStable   = parts.some(s=>STABLE.has(s));
+      const hasExcl     = parts.some(s=>EXCL_TOKENS.has(s));
+      if(!CHAINS.has(p.chain)) continue;
+      if(!hasStable || hasExcl) continue;
+      if(EXCL_SYM.has(p.symbol)) continue;
+      const apy30d = p.apyMean30d||p.apy;
+      if((p.tvlUsd||0)<10e6 || (p.apy||0)<1.5 || apy30d<1.5) continue;
+      const k=`${p.project}|${p.symbol}|${p.chain}`;
+      if(!seen[k] || p.apy>seen[k].apy)
+        seen[k]={project:p.project,symbol:p.symbol,chain:p.chain,
+                  apy:Math.round(p.apy*100)/100,
+                  apy30d:Math.round((p.apyMean30d||p.apy)*100)/100,
+                  tvlM:Math.round(p.tvlUsd/1e4)/100,
+                  url:p.url||`https://defillama.com/protocol/${p.project}`};
+    }
+    const result = Object.values(seen)
+      .sort((a,b)=>b.tvlM-a.tvlM).slice(0,30)
+      .filter(p=>!EXCL_PROJ.has(p.project));
+
+    // Atualizar LIVE_POOLS em memória e re-renderizar
+    LIVE_POOLS.length = 0;
+    result.forEach(p=>LIVE_POOLS.push(p));
+    initDashboard();
+
+    // Atualizar timestamp
+    const now = new Date();
+    document.getElementById('updateTs').textContent =
+      now.toLocaleString('pt-BR') + ' (atualizado agora)';
+
+    icon.classList.remove('spin');
+    icon.textContent = '✓';
+    setTimeout(()=>{ icon.textContent='↻'; }, 2000);
+
+  } catch(e) {
+    console.error('Refresh falhou:', e);
+    icon.classList.remove('spin');
+    icon.textContent = '✗';
+    setTimeout(()=>{ icon.textContent='↻'; }, 2000);
+    alert('Não foi possível buscar dados da DeFiLlama. Verifique sua conexão.');
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+}
+
+// ── GERAR PDF ────────────────────────────────────────────────
+// Gera um one-pager A4 diretamente no browser com dados ao vivo.
+// Funciona em qualquer máquina — sem Python, sem arquivo estático.
+// Instrução: no diálogo de impressão, selecione "Salvar como PDF".
+
+function buildPrintView() {
+  const HIGH_RISK = new Set(['maple','goldfinch','yo-protocol']);
+  const RISK_MAP = {
+    'avantis':'Médio','fluid-lending':'Médio','curve-dex':'Médio',
+    'convex-finance':'Médio','euler-v2':'Médio','yearn-finance':'Médio',
+    'merkl':'Médio','dolomite':'Médio','uniswap-v3':'Médio',
+    'lazy-summer-protocol':'Médio','termmax':'Médio','zerobase-cedefi':'Médio',
+    'aave-v3':'Baixo','compound-v3':'Baixo','spark-savings':'Baixo','sparklend':'Baixo'
+  };
+  const RISK_COL = {'Baixo':'#4ade80','Médio':'#facc15','Alto':'#f87171'};
+  const CHAIN_S  = {Ethereum:'ETH',Base:'BASE',Arbitrum:'ARB',Optimism:'OP'};
+  const md  = MARKET_DATA;
+  const date = new Date().toLocaleDateString('pt-BR');
+
+  const proto = p => p.project.replace(/-v\d+/g,'').replace(/-dex/,'')
+    .replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase()).slice(0,22);
+
+  // Chart: top 6 DeFi (sem risco alto, 1 por projeto)
+  const chartPools = Object.values(
+    LIVE_POOLS.filter(p=>!HIGH_RISK.has(p.project))
+      .reduce((acc,p)=>{
+        if(!acc[p.project]||p.apy>acc[p.project].apy) acc[p.project]=p;
+        return acc;
+      }, {})
+  ).sort((a,b)=>b.apy-a.apy).slice(0,6);
+
+  const maxAPY = Math.max(...chartPools.map(p=>p.apy),
+    md.tbill_1y, md.tbond_10y||4.3, md.hi_yield_savings, md.selic_usd_hist) * 1.15;
+
+  const barRow = (label, apy, color, cat) => {
+    const pct = Math.max(2, apy/maxAPY*100).toFixed(1);
+    const catBg = {DeFi:'#170930',USD:'#0d1a0d',BRL:'#0a1a0a'};
+    const catTx = {DeFi:'#8ffff8',USD:'#9ca3af',BRL:'#4ade80'};
+    return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+      <div style="width:155px;font-size:7.5px;color:${cat==='DeFi'?'#f0eaf8':'#9ca3af'};overflow:hidden;white-space:nowrap">${label}</div>
+      <div style="flex:1;height:14px;background:#1a1228;border-radius:3px;position:relative">
+        <div style="position:absolute;left:0;top:0;width:${pct}%;height:100%;background:${color};border-radius:3px"></div>
+      </div>
+      <div style="width:46px;font-size:8.5px;font-weight:700;color:${color};text-align:right">${apy.toFixed(2)}%</div>
+      <div style="width:32px;font-size:6.5px;font-weight:700;color:${catTx[cat]};background:${catBg[cat]};padding:2px 3px;border-radius:3px;text-align:center">${cat}</div>
+    </div>`;
+  };
+
+  // Tabela: top 10 sem risco alto
+  const tablePools = LIVE_POOLS.filter(p=>!HIGH_RISK.has(p.project))
+    .sort((a,b)=>b.apy-a.apy).slice(0,10);
+
+  const tableRows = tablePools.map((p,i)=>{
+    const risk = RISK_MAP[p.project]||'Médio';
+    const rc   = RISK_COL[risk]||'#facc15';
+    const tvl  = p.tvlM<1000?`$${p.tvlM.toFixed(0)}M`:`$${(p.tvlM/1000).toFixed(1)}B`;
+    const url  = (p.url||'').replace('https://','').split('/')[0].slice(0,26);
+    const bg   = i%2===1?'background:#110a20':'';
+    return `<tr style="${bg}">
+      <td style="padding:5px 6px;font-weight:600;color:#c4b5d8;font-size:8px">${proto(p)} (${p.symbol.slice(0,8)})</td>
+      <td style="padding:5px 6px;color:#9ca3af;font-size:8px">${CHAIN_S[p.chain]||p.chain.slice(0,4)}</td>
+      <td style="padding:5px 6px;font-weight:700;color:#822ee5;font-size:8.5px">${p.apy.toFixed(2)}%</td>
+      <td style="padding:5px 6px;color:#9ca3af;font-size:8px">${p.apy30d.toFixed(2)}%</td>
+      <td style="padding:5px 6px;font-weight:600;color:#f0eaf8;font-size:8px">${tvl}</td>
+      <td style="padding:5px 6px;font-weight:600;color:${rc};font-size:8px">${risk}</td>
+      <td style="padding:5px 6px;color:#818cf8;font-size:7.5px">${url}</td>
+    </tr>`;
+  }).join('');
+
+  // KPIs
+  const safePools = LIVE_POOLS.filter(p=>!HIGH_RISK.has(p.project));
+  const bestAll  = safePools.reduce((a,b)=>a.apy>b.apy?a:b);
+  const bestSafe = safePools.reduce((a,b)=>a.apy>b.apy?a:b);
+  const simSafe  = Math.round(10000*(Math.pow(1+bestSafe.apy/100/12,12)-1));
+  const simTbill = Math.round(10000*md.tbill_1y/100);
+  const simSelic = Math.round(10000*md.selic_usd_hist/100);
+  const defiLo   = Math.min(...safePools.map(p=>p.apy)).toFixed(1);
+  const defiHi   = Math.max(...LIVE_POOLS.map(p=>p.apy)).toFixed(0);
+
+  const kpi = (label,val,sub,note,col) =>
+    `<div style="background:#1a1228;border-radius:8px;border:1px solid #2e1f4a;padding:12px 14px;flex:1;position:relative;overflow:hidden;min-width:0">
+      <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:${col};border-radius:4px 0 0 4px"></div>
+      <div style="font-size:6.5px;font-weight:700;color:#8b70b8;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px">${label}</div>
+      <div style="font-size:19px;font-weight:700;color:${col};line-height:1.1;margin-bottom:5px">${val}</div>
+      <div style="font-size:7.5px;color:#c4b5d8;margin-bottom:2px">${sub}</div>
+      <div style="font-size:6.5px;color:#8b70b8">${note}</div>
+    </div>`;
+
+  // Alturas fixas para cada seção (mm) — soma exata = 297mm
+  // header:32  chart:90  kpi:24  table:106  brazil:20  footer:7  gaps(5×2.8mm):14  = 293mm
+  // padding lateral 20px = 0mm vertical
+  document.getElementById('print-view').innerHTML = `
+  <div style="width:210mm;height:297mm;background:#0f0a1a;color:#f0eaf8;font-family:Helvetica,Arial,sans-serif;padding:0 20px;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden">
+
+    <!-- ── HEADER ── 32mm ── -->
+    <div style="height:32mm;flex-shrink:0;display:flex;align-items:center;background:#120c24;border-radius:0 0 10px 10px;border:1px solid #2e1f4a;border-top:none;padding:0 18px;margin-bottom:2.8mm;position:relative;overflow:hidden">
+      <!-- glow decoration -->
+      <div style="position:absolute;top:-30px;right:-30px;width:140px;height:140px;background:radial-gradient(circle,rgba(130,46,229,.22),transparent 70%);pointer-events:none"></div>
+      <!-- accent bar -->
+      <div style="background:linear-gradient(180deg,#a855f7,#7c3aed);width:5px;border-radius:3px;align-self:stretch;margin:0 14px 0 0;flex-shrink:0"></div>
+      <!-- logo -->
+      <img src="logo-vertical.png" style="height:72px;width:auto;margin-right:16px;object-fit:contain;flex-shrink:0" onerror="this.style.display='none'">
+      <!-- text -->
+      <div style="flex:1">
+        <div style="font-size:19px;font-weight:700;color:#ffffff;letter-spacing:-.4px;line-height:1.1">Renda Passiva On-chain</div>
+        <div style="font-size:9px;color:#c4b5d8;margin-top:3px">Rendimento real em dólar, acima do mercado tradicional</div>
+        <div style="margin-top:8px;display:flex;gap:6px">
+          <span style="background:#822ee5;color:#fff;padding:3px 12px;border-radius:20px;font-size:7.5px;font-weight:700;letter-spacing:.2px">USDT · USDC</span>
+          <span style="background:#61358b;color:#fff;padding:3px 12px;border-radius:20px;font-size:7.5px;font-weight:700;letter-spacing:.2px">ETH · Base · ARB</span>
+          <span style="background:#2e1f4a;color:#c4b5d8;padding:3px 12px;border-radius:20px;font-size:7.5px;font-weight:600">${date}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CHART ── 90mm ── -->
+    <div style="height:90mm;flex-shrink:0;background:#120c24;border-radius:8px;border:1px solid #2e1f4a;padding:10px 16px;margin-bottom:2.8mm;display:flex;flex-direction:column;overflow:hidden">
+      <!-- Cabeçalho do chart -->
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px;flex-shrink:0">
+        <div style="font-size:9.5px;font-weight:700;color:#ffffff">Rentabilidade Anual — DeFi vs Mercado Tradicional</div>
+        <div style="font-size:6.5px;color:#6b7280">16.740 pools · 30 selecionados</div>
+      </div>
+      <div style="font-size:7px;color:#8b70b8;margin-bottom:9px;flex-shrink:0">APY live DeFiLlama · FedReserve H.15 · BCB · Atualizado ${date}</div>
+
+      <!-- Barras DeFi -->
+      <div style="flex-shrink:0">
+        ${chartPools.map(p=>barRow(`${proto(p)} (${p.symbol.slice(0,8)})`, p.apy, p.apy>=8?'#6d28d9':'#822ee5','DeFi')).join('')}
+      </div>
+
+      <!-- Espaçador flexível (empurra trad para baixo) -->
+      <div style="flex:1"></div>
+
+      <!-- Separador + Trad bars -->
+      <div style="flex-shrink:0">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+          <div style="flex:1;height:1px;background:#2e1f4a"></div>
+          <div style="font-size:6.5px;color:#6b7280;white-space:nowrap">── Mercado Tradicional ──</div>
+          <div style="flex:1;height:1px;background:#2e1f4a"></div>
+        </div>
+        ${barRow('US T-Bill 1 ano',        md.tbill_1y,           '#4b5563','USD')}
+        ${barRow('US T-Bond 10 anos',      md.tbond_10y||4.3,     '#4b5563','USD')}
+        ${barRow('Hi-Yield Savings EUA',   md.hi_yield_savings,   '#4b5563','USD')}
+        ${barRow('Selic adj. USD (hist.)', md.selic_usd_hist,     '#6b7280','BRL')}
+      </div>
+
+      <!-- Legenda — sempre visível, sempre no fundo do chart -->
+      <div style="flex-shrink:0;display:flex;gap:18px;margin-top:8px;padding-top:7px;border-top:1px solid #2e1f4a">
+        <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:7px;background:#822ee5;border-radius:2px"></div><span style="font-size:6.5px;color:#c4b5d8">DeFi — APY atual</span></div>
+        <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:7px;background:#4b5563;border-radius:2px"></div><span style="font-size:6.5px;color:#c4b5d8">TradFi USD</span></div>
+        <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:7px;background:#6b7280;border-radius:2px"></div><span style="font-size:6.5px;color:#c4b5d8">Selic adj. USD</span></div>
+      </div>
+    </div>
+
+    <!-- ── KPI CARDS ── 24mm ── -->
+    <div style="height:24mm;flex-shrink:0;display:flex;gap:8px;margin-bottom:2.8mm">
+      ${kpi('Melhor APY DeFi',      `${bestAll.apy.toFixed(2)}%`,   proto(bestAll),   `vs ${md.tbill_1y.toFixed(2)}% T-Bill EUA`,                                    '#822ee5')}
+      ${kpi('Conservador s/ risco', `${bestSafe.apy.toFixed(2)}%`,  proto(bestSafe),  'Risco baixo/médio',                                                            '#ffb81c')}
+      ${kpi('Simulação $10k/12m',   `+$${simSafe.toLocaleString()}`, 'Rendimento estimado DeFi', `vs +$${simTbill} T-Bill`,                                           '#4ade80')}
+      ${kpi('Selic em dólar',       `+$${simSelic.toLocaleString()}`,'Selic adj. USD / $10k/12m',`Selic ${md.selic_meta.toFixed(2)}% BRL→USD ~${md.selic_usd_hist.toFixed(1)}%`,'#f87171')}
+    </div>
+
+    <!-- ── TABLE ── 106mm ── -->
+    <div style="height:106mm;flex-shrink:0;background:#120c24;border-radius:8px;border:1px solid #2e1f4a;padding:10px 16px;margin-bottom:2.8mm;overflow:hidden;display:flex;flex-direction:column">
+      <div style="flex-shrink:0;display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="font-size:9.5px;font-weight:700;color:#ffffff">Top Protocolos — Live DeFiLlama</div>
+        <div style="font-size:7px;color:#8b70b8">risco alto excluído · ordenado por APY</div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;flex:1">
+        <thead>
+          <tr style="background:#231733">
+            <th style="padding:5px 6px;text-align:left;color:#8b70b8;font-size:7px;font-weight:700;letter-spacing:.4px;text-transform:uppercase">Protocolo (Ativo)</th>
+            <th style="padding:5px 6px;text-align:left;color:#8b70b8;font-size:7px;font-weight:700;letter-spacing:.4px;text-transform:uppercase">Rede</th>
+            <th style="padding:5px 6px;text-align:left;color:#8b70b8;font-size:7px;font-weight:700;letter-spacing:.4px;text-transform:uppercase">APY</th>
+            <th style="padding:5px 6px;text-align:left;color:#8b70b8;font-size:7px;font-weight:700;letter-spacing:.4px;text-transform:uppercase">APY 30d</th>
+            <th style="padding:5px 6px;text-align:left;color:#8b70b8;font-size:7px;font-weight:700;letter-spacing:.4px;text-transform:uppercase">TVL</th>
+            <th style="padding:5px 6px;text-align:left;color:#8b70b8;font-size:7px;font-weight:700;letter-spacing:.4px;text-transform:uppercase">Risco</th>
+            <th style="padding:5px 6px;text-align:left;color:#8b70b8;font-size:7px;font-weight:700;letter-spacing:.4px;text-transform:uppercase">URL</th>
+          </tr>
+        </thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+    </div>
+
+    <!-- ── BRAZIL ── 20mm ── -->
+    <div style="height:20mm;flex-shrink:0;background:#0f0820;border-radius:8px;border:1px solid #2e1f4a;padding:7px 16px;margin-bottom:2.8mm;display:flex;flex-direction:column;overflow:hidden">
+      <div style="flex-shrink:0;font-size:9px;font-weight:700;color:#ffb81c;text-align:center;margin-bottom:7px">Por que a Selic não protege em dólar — e o DeFi sim</div>
+      <div style="flex:1;display:flex">
+        <div style="flex:1;border-right:1px solid #2e1f4a;padding-right:14px">
+          <div style="font-size:7px;color:#8b70b8;margin-bottom:3px">Inflação (IPCA)</div>
+          <div style="font-size:20px;font-weight:700;color:#f87171;line-height:1">-${md.ipca_12m.toFixed(2)}%</div>
+          <div style="font-size:6.5px;color:#8b70b8;margin-top:2px">Corrói poder de compra BRL</div>
+        </div>
+        <div style="flex:1;border-right:1px solid #2e1f4a;padding:0 14px">
+          <div style="font-size:7px;color:#8b70b8;margin-bottom:3px">Selic adj. USD</div>
+          <div style="font-size:20px;font-weight:700;color:#c4b5d8;line-height:1">~${md.selic_usd_hist.toFixed(1)}%</div>
+          <div style="font-size:6.5px;color:#8b70b8;margin-top:2px">Selic real após deprec. cambial</div>
+        </div>
+        <div style="flex:1;padding-left:14px">
+          <div style="font-size:7px;color:#8b70b8;margin-bottom:3px">DeFi (USDC/USDT)</div>
+          <div style="font-size:20px;font-weight:700;color:#822ee5;line-height:1">${defiLo}–${defiHi}%</div>
+          <div style="font-size:6.5px;color:#8b70b8;margin-top:2px">Em dólar · saque livre · 24h</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FOOTER ── 7mm ── -->
+    <div style="height:7mm;flex-shrink:0;border-top:1px solid #2e1f4a;display:flex;justify-content:space-between;align-items:center;padding-top:3px">
+      <div style="display:flex;align-items:center;gap:7px">
+        <img src="logo-simbolo.png" style="height:18px;width:auto" onerror="this.style.display='none'">
+        <span style="font-size:8px;font-weight:700;color:#8b70b8">Formadores de Mercado</span>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:7px;color:#6b7280">Atualizado: ${date} · Não constitui recomendação de investimento</div>
+        <div style="font-size:6.5px;color:#4b5563">defillama.com/yields · federalreserve.gov · bcb.gov.br</div>
+      </div>
+    </div>
+
+  </div>`;
+}
+
+function generatePDF(){
+  buildPrintView();
+  const btn = document.querySelector('.btn-pdf');
+  btn.innerHTML = '⏳ Preparando...';
+  btn.disabled = true;
+  setTimeout(()=>{
+    window.print();
+    btn.innerHTML = '📄 Gerar PDF';
+    btn.disabled = false;
+  }, 300);
+}
+
+function showTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='brazil') initBrazil();
+}
+
+function initBrazil(){
+  const aavePool_br   =LIVE_POOLS.find(p=>p.project==='aave-v3'&&p.symbol==='USDT');
+  const fluidPool_br  =LIVE_POOLS.find(p=>p.project==='fluid-lending'&&p.symbol==='USDT');
+  const convexPool_br =LIVE_POOLS.find(p=>p.project==='convex-finance');
+  const avantisPool_br=LIVE_POOLS.find(p=>p.project==='avantis');
+  if(aavePool_br)   document.getElementById('brAaveApy').textContent=aavePool_br.apy.toFixed(2)+'% USD';
+  if(fluidPool_br)  document.getElementById('brFluidApy').textContent=fluidPool_br.apy.toFixed(2)+'% USD';
+  if(convexPool_br) document.getElementById('brConvexApy').textContent=convexPool_br.apy.toFixed(2)+'% USD';
+  if(avantisPool_br)document.getElementById('brAvantisApy').textContent=avantisPool_br.apy.toFixed(2)+'% USD';
+
+  const USD_BRL       = MARKET_DATA.usd_brl        || 5.00;
+  const SELIC         = (MARKET_DATA.selic_meta     || 14.75)/100;
+  const IPCA          = (MARKET_DATA.ipca_12m       || 4.14)/100;
+  const SELIC_USD_HIST= (MARKET_DATA.selic_usd_hist || 6.50)/100;
+  const apy_aave    = (aavePool_br?.apy||2.4)/100;
+  const apy_defi    = (fluidPool_br?.apy||5.3)/100;
+  const apy_convex  = (convexPool_br?.apy||8.85)/100;
+  const apy_avantis = (avantisPool_br?.apy||11.02)/100;
+  const cap_brl = 10000 * USD_BRL;
+
+  const selic_brl_12m  = Math.round(cap_brl * SELIC);
+  const selic_real_brl = Math.round(cap_brl * ((1+SELIC)/(1+IPCA)-1));
+  const selic_usd      = Math.round(10000 * SELIC_USD_HIST);
+  const defi_aave      = Math.round(10000 * (Math.pow(1+apy_aave/12,12)-1));
+  const defi_fluid     = Math.round(10000 * (Math.pow(1+apy_defi/12,12)-1));
+  const defi_convex    = Math.round(10000 * (Math.pow(1+apy_convex/12,12)-1));
+  const defi_avantis   = Math.round(10000 * (Math.pow(1+apy_avantis/12,12)-1));
+
+  document.getElementById('brSimKpis').innerHTML=[
+    ['c-green','green',`R$ ${selic_brl_12m.toLocaleString('pt-BR')}`,'Tesouro Selic (BRL bruto)','Sobre R$50.000 investidos'],
+    ['c-yellow','yellow',`R$ ${selic_real_brl.toLocaleString('pt-BR')}`,'Selic BRL real (−IPCA)','R$50k × 12m · após inflação'],
+    ['c-purple','purple',`$${selic_usd.toLocaleString()}`,'Selic adj. USD (hist.) 🔴','$10k × 12m · após deprec. câmbio'],
+    ['c-purple','purple',`$${defi_aave.toLocaleString()}`,'Aave V3 USDT 🟢 DeFi','$10k × 12m · risco baixo'],
+    ['c-green','green',  `$${defi_fluid.toLocaleString()}`,'Fluid USDT 🟡 DeFi','$10k × 12m · risco médio'],
+    ['c-green','green',  `$${defi_convex.toLocaleString()}`,'Convex Finance 🟡 DeFi','$10k × 12m · risco médio'],
+    ['c-purple','purple',`$${defi_avantis.toLocaleString()}`,'Avantis (Base) 🟡 DeFi','$10k × 12m · maior rendimento'],
+  ].map(([cls,vc,val,lbl,note])=>`<div class="kpi-card ${cls}"><div class="kpi-label">${lbl}</div><div class="kpi-val ${vc}">${val}</div><div class="kpi-sub">${note}</div></div>`).join('');
+}
+
+// ── INICIALIZAÇÃO ────────────────────────────────────────────
+initDashboard();
+</script>
+
+<!-- Print view: montado dinamicamente pelo buildPrintView() ao clicar em Gerar PDF -->
+<div id="print-view"></div>
+</body>
+</html>
