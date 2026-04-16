@@ -236,6 +236,100 @@ input[type=range]{width:100%;accent-color:var(--fdm-purple);cursor:pointer}
 .bar-label { color:var(--text); }
 .bar-label.trad { color:var(--dim); }
 
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVIDADE MOBILE
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* ── Header ── */
+  .header { padding: 16px 16px 14px; }
+  .header-inner { flex-direction: column; gap: 12px; }
+  .brand { gap: 10px; }
+  .brand img { width: 36px !important; height: 36px !important; }
+  .brand-text h1 { font-size: 16px; }
+  .brand-text p  { font-size: 11px; }
+  .header-meta { align-items: flex-start; flex-direction: row; flex-wrap: wrap; gap: 8px; }
+  .action-btns { gap: 6px; }
+  .btn-mode, .btn-refresh, .btn-pdf { padding: 6px 11px; font-size: 10px; }
+  .update-ts { font-size: 10px; width: 100%; }
+
+  /* ── Nav tabs — scroll horizontal ── */
+  .nav { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 0 16px; }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-tab { padding: 12px 14px; font-size: 12px; white-space: nowrap; flex-shrink: 0; }
+
+  /* ── Main content ── */
+  .main { padding: 16px 16px 32px; }
+
+  /* ── KPI grid — 2 colunas no mobile ── */
+  .kpi-grid { grid-template-columns: 1fr 1fr !important; gap: 10px; }
+  .kpi-card { padding: 14px 12px; }
+  .kpi-val  { font-size: 22px !important; }
+  .kpi-label{ font-size: 10px; }
+  .kpi-sub  { font-size: 10px; }
+
+  /* ── Bar chart ── */
+  .chart-card { padding: 14px 12px; }
+  .chart-title { font-size: 13px; }
+  .chart-sub   { font-size: 10px; }
+  .bar-wrap { gap: 4px; margin-bottom: 7px; }
+  .bar-label { font-size: 10px; width: 110px !important; }
+  .bar-val   { font-size: 11px; min-width: 38px; }
+  .bar-cat   { font-size: 9px; min-width: 28px; }
+
+  /* ── Tabelas — scroll horizontal ── */
+  .table-card { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 12px 0; }
+  .table-card > *:not(table) { padding: 0 12px; }
+  .table-card table { min-width: 560px; }
+  .table-header { padding: 0 12px 10px; flex-direction: column; gap: 8px; }
+  .filter-row { flex-wrap: wrap; gap: 6px; }
+  thead th { font-size: 10px; padding: 6px 8px; }
+  tbody td { font-size: 11px; padding: 6px 8px; }
+
+  /* ── Simulador ── */
+  .sim-grid { grid-template-columns: 1fr !important; gap: 16px; }
+  /* CSS Grid min-content fix: impede que itens expandam além do container */
+  .sim-grid > * { min-width: 0; }
+  .sim-panel { padding: 16px; }
+  .form-input, .form-select { width: 100%; max-width: 100%; box-sizing: border-box; }
+  input[type=range] { width: 100%; max-width: 100%; }
+  .res-grid  { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .res-card  { padding: 12px; }
+  .res-val   { font-size: 20px; }
+  .calc-btn  { width: 100%; padding: 12px; }
+  #growthChart { height: 180px !important; }
+  .chart-title { white-space: normal; word-break: break-word; }
+
+  /* ── Risk grid — 1 coluna ── */
+  .risk-grid { grid-template-columns: 1fr !important; }
+  .risk-filter-bar { gap: 6px; }
+  .risk-filter-btn { font-size: 11px; padding: 5px 10px; }
+
+  /* ── Section titles ── */
+  .sec-title { font-size: 13px; }
+
+  /* ── vs Brasil KPIs — 2 colunas ── */
+  #brazil .kpi-grid { grid-template-columns: 1fr 1fr !important; }
+
+  /* ── Disclaimer ── */
+  .disclaimer { font-size: 11px; padding: 10px 12px; gap: 8px; }
+
+  /* ── Footer ── */
+  .footer { padding: 14px 16px; font-size: 10px; }
+
+  /* ── Erros comuns — 1 coluna ── */
+  #risk [style*="grid-template-columns:1fr 1fr"] { display: flex !important; flex-direction: column; }
+}
+
+@media (max-width: 480px) {
+  /* Telas muito pequenas — iPhone SE, etc. */
+  .kpi-grid { grid-template-columns: 1fr !important; }
+  #brazil .kpi-grid { grid-template-columns: 1fr !important; }
+  .res-grid { grid-template-columns: 1fr !important; }
+  .header-meta { flex-direction: column; }
+  .brand-text h1 { font-size: 15px; }
+}
+
 /* ── PRINT / GERAR PDF ───────────────────────────────────── */
 #print-view { display:none; }
 @media print {
