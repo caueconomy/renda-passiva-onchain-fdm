@@ -2,7 +2,7 @@
 
 Dashboard de yields DeFi em USDC/USDT com comparação contra mercado tradicional (T-Bill, Selic, IPCA).
 
-**Acesso:** [fdm-renda-passiva.github.io](https://formadores-de-mercado.github.io/renda-passiva-onchain/) *(atualizar após publicar)*
+**Acesso:** [caueconomy.github.io/renda-passiva-onchain-fdm](https://caueconomy.github.io/renda-passiva-onchain-fdm/)
 
 ---
 
@@ -19,8 +19,8 @@ Depois de rodar, fazer o commit e push para o GitHub atualizar a página online:
 
 ```bash
 git add defi_pools.json market_data.json index.html
-git commit -m "dados: refresh $(date +%d/%m/%Y)"
-git push
+git commit -m "dados: refresh %date%"
+git push origin main
 ```
 
 A página online atualiza automaticamente em ~1 minuto após o push.

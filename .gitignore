@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# PDFs gerados localmente (não precisam ir pro GitHub)
+renda-passiva-onchain-onepager.pdf
+Renda Passiva On-chain — Formadores de Mercado.pdf
+
+# Excel local
+*.xlsx
+
+# Ambientes virtuais
+.env
+venv/
