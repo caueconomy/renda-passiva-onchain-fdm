@@ -5,11 +5,11 @@
   "hi_yield_savings": 4.5,
   "sofr": 4.1,
   "sp500_hist_10y": 11.84,
-  "selic_meta": 14.75,
+  "selic_meta": 14.5,
   "cdi_annual": 14.65,
   "ipca_12m": 4.14,
-  "usd_brl": 4.9878,
-  "selic_usd_hist": 6.75,
-  "selic_real_brl": 10.19,
-  "updated_at": "2026-04-29T14:13:15.226554+00:00"
+  "usd_brl": 4.9985,
+  "selic_usd_hist": 6.5,
+  "selic_real_brl": 9.95,
+  "updated_at": "2026-04-30T14:10:52.262886+00:00"
 }
