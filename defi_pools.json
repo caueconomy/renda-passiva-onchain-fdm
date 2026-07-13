@@ -5,16 +5,16 @@
     "chain": "Ethereum",
     "apy": 4.88,
     "apy30d": 4.98,
-    "tvlM": 3339.7,
+    "tvlM": 3304.6,
     "url": "https://app.maple.finance/earn"
   },
   {
     "project": "maple",
     "symbol": "USDT",
     "chain": "Ethereum",
-    "apy": 4.07,
-    "apy30d": 4.11,
-    "tvlM": 1013.0,
+    "apy": 4.13,
+    "apy30d": 4.1,
+    "tvlM": 1001.0,
     "url": "https://app.maple.finance/earn"
   },
   {
@@ -23,7 +23,7 @@
     "chain": "Ethereum",
     "apy": 2.75,
     "apy30d": 2.53,
-    "tvlM": 429.6,
+    "tvlM": 404.6,
     "url": "https://spark.fi/savings"
   },
   {
@@ -32,60 +32,60 @@
     "chain": "Ethereum",
     "apy": 3.6,
     "apy30d": 3.6,
-    "tvlM": 307.8,
+    "tvlM": 306.9,
     "url": "https://spark.fi/savings"
   },
   {
     "project": "fluid-lending",
     "symbol": "USDC",
     "chain": "Ethereum",
-    "apy": 5.01,
-    "apy30d": 6.28,
-    "tvlM": 135.7,
+    "apy": 5.2,
+    "apy30d": 6.26,
+    "tvlM": 133.5,
     "url": "https://fluid.instadapp.io/lending/"
   },
   {
     "project": "fluid-lending",
     "symbol": "USDT",
     "chain": "Ethereum",
-    "apy": 5.45,
-    "apy30d": 5.65,
-    "tvlM": 126.5,
+    "apy": 5.65,
+    "apy30d": 5.69,
+    "tvlM": 122.9,
     "url": "https://fluid.instadapp.io/lending/"
   },
   {
     "project": "aave-v3",
     "symbol": "USDT",
     "chain": "Ethereum",
-    "apy": 6.74,
-    "apy30d": 6.64,
-    "tvlM": 78.9,
+    "apy": 6.83,
+    "apy30d": 6.65,
+    "tvlM": 79.0,
     "url": "https://app.aave.com/markets/"
   },
   {
     "project": "curve-dex",
     "symbol": "USDC-RLUSD",
     "chain": "Ethereum",
-    "apy": 5.67,
-    "apy30d": 5.88,
-    "tvlM": 67.2,
+    "apy": 5.44,
+    "apy30d": 5.86,
+    "tvlM": 71.3,
     "url": "https://curve.fi/#/ethereum/pools"
   },
   {
     "project": "aave-v3",
     "symbol": "USDC",
     "chain": "Ethereum",
-    "apy": 6.85,
+    "apy": 6.8,
     "apy30d": 7.3,
-    "tvlM": 64.0,
+    "tvlM": 64.3,
     "url": "https://app.aave.com/markets/"
   },
   {
     "project": "centrifuge-protocol",
     "symbol": "USDC",
     "chain": "Base",
-    "apy": 1.85,
-    "apy30d": 3.96,
+    "apy": 3.59,
+    "apy30d": 3.89,
     "tvlM": 50.2,
     "url": "https://defillama.com/protocol/centrifuge-protocol"
   },
@@ -102,36 +102,36 @@
     "project": "compound-v3",
     "symbol": "USDT",
     "chain": "Ethereum",
-    "apy": 2.88,
+    "apy": 2.87,
     "apy30d": 2.82,
-    "tvlM": 43.5,
+    "tvlM": 44.4,
     "url": "https://app.compound.finance/"
   },
   {
     "project": "curve-dex",
     "symbol": "PYUSD-USDC",
     "chain": "Ethereum",
-    "apy": 5.9,
-    "apy30d": 5.56,
-    "tvlM": 38.4,
+    "apy": 5.75,
+    "apy30d": 5.57,
+    "tvlM": 38.9,
     "url": "https://curve.fi/#/ethereum/pools"
   },
   {
     "project": "fluid-lending",
     "symbol": "USDC",
     "chain": "Arbitrum",
-    "apy": 5.62,
+    "apy": 5.56,
     "apy30d": 5.78,
-    "tvlM": 38.1,
+    "tvlM": 38.7,
     "url": "https://fluid.instadapp.io/lending/"
   },
   {
     "project": "fluid-lite",
     "symbol": "USDC",
     "chain": "Ethereum",
-    "apy": 8.1,
-    "apy30d": 8.41,
-    "tvlM": 37.0,
+    "apy": 7.94,
+    "apy30d": 8.38,
+    "tvlM": 37.8,
     "url": "https://defillama.com/protocol/fluid-lite"
   },
   {
@@ -144,55 +144,55 @@
     "url": "https://app.goldfinch.finance/earn"
   },
   {
-    "project": "aave-v3",
-    "symbol": "USDC",
-    "chain": "Arbitrum",
-    "apy": 2.55,
-    "apy30d": 2.29,
-    "tvlM": 33.8,
-    "url": "https://app.aave.com/markets/"
-  },
-  {
     "project": "compound-v3",
     "symbol": "USDC",
     "chain": "Ethereum",
-    "apy": 4.32,
+    "apy": 3.33,
     "apy30d": 3.29,
-    "tvlM": 32.5,
+    "tvlM": 34.2,
     "url": "https://app.compound.finance/"
   },
   {
     "project": "aave-v3",
     "symbol": "USDC",
-    "chain": "Base",
-    "apy": 3.12,
-    "apy30d": 3.13,
-    "tvlM": 30.1,
+    "chain": "Arbitrum",
+    "apy": 2.59,
+    "apy30d": 2.31,
+    "tvlM": 32.4,
     "url": "https://app.aave.com/markets/"
   },
   {
-    "project": "dolomite",
+    "project": "aave-v3",
     "symbol": "USDC",
-    "chain": "Ethereum",
-    "apy": 7.84,
-    "apy30d": 8.63,
-    "tvlM": 29.2,
-    "url": "https://dolomite.io/"
+    "chain": "Base",
+    "apy": 3.14,
+    "apy30d": 3.13,
+    "tvlM": 29.7,
+    "url": "https://app.aave.com/markets/"
   },
   {
     "project": "avantis",
     "symbol": "USDC",
     "chain": "Base",
-    "apy": 8.53,
-    "apy30d": 9.8,
-    "tvlM": 29.2,
+    "apy": 8.55,
+    "apy30d": 9.76,
+    "tvlM": 29.1,
     "url": "https://www.avantisfi.com/"
+  },
+  {
+    "project": "dolomite",
+    "symbol": "USDC",
+    "chain": "Ethereum",
+    "apy": 7.93,
+    "apy30d": 8.6,
+    "tvlM": 28.7,
+    "url": "https://dolomite.io/"
   },
   {
     "project": "yearn-finance",
     "symbol": "USDC",
     "chain": "Ethereum",
-    "apy": 3.19,
+    "apy": 3.21,
     "apy30d": 3.22,
     "tvlM": 25.5,
     "url": "https://yearn.fi/"
@@ -202,16 +202,25 @@
     "symbol": "USDT",
     "chain": "Ethereum",
     "apy": 6.05,
-    "apy30d": 3.08,
-    "tvlM": 15.8,
+    "apy30d": 3.2,
+    "tvlM": 15.7,
     "url": "https://app.spark.fi/markets/"
+  },
+  {
+    "project": "pareto-credit",
+    "symbol": "USDC",
+    "chain": "Ethereum",
+    "apy": 10.59,
+    "apy30d": 10.59,
+    "tvlM": 15.2,
+    "url": "https://defillama.com/protocol/pareto-credit"
   },
   {
     "project": "morpho-blue",
     "symbol": "KPK-USDC-PRIME",
     "chain": "Ethereum",
-    "apy": 4.09,
-    "apy30d": 3.86,
+    "apy": 4.32,
+    "apy30d": 3.87,
     "tvlM": 15.1,
     "url": "https://defillama.com/protocol/morpho-blue"
   },
@@ -228,16 +237,16 @@
     "project": "morpho-blue",
     "symbol": "API3-DCOMP-USDC",
     "chain": "Ethereum",
-    "apy": 50.6,
-    "apy30d": 18.19,
-    "tvlM": 12.0,
+    "apy": 12.8,
+    "apy30d": 18.85,
+    "tvlM": 12.7,
     "url": "https://defillama.com/protocol/morpho-blue"
   },
   {
     "project": "yo-protocol",
     "symbol": "USDC",
     "chain": "Base",
-    "apy": 4.06,
+    "apy": 4.12,
     "apy30d": 4.28,
     "tvlM": 10.1,
     "url": "https://yo.xyz/"
