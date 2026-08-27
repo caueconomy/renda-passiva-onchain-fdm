@@ -3,18 +3,18 @@
     "project": "maple",
     "symbol": "USDC",
     "chain": "Ethereum",
-    "apy": 4.85,
+    "apy": 4.93,
     "apy30d": 4.9,
-    "tvlM": 2782.8,
+    "tvlM": 2759.2,
     "url": "https://app.maple.finance/earn"
   },
   {
     "project": "maple",
     "symbol": "USDT",
     "chain": "Ethereum",
-    "apy": 4.35,
+    "apy": 4.63,
     "apy30d": 4.21,
-    "tvlM": 1032.4,
+    "tvlM": 1045.3,
     "url": "https://app.maple.finance/earn"
   },
   {
@@ -22,8 +22,8 @@
     "symbol": "USDT",
     "chain": "Ethereum",
     "apy": 3.25,
-    "apy30d": 2.88,
-    "tvlM": 362.9,
+    "apy30d": 2.9,
+    "tvlM": 363.1,
     "url": "https://spark.fi/savings"
   },
   {
@@ -32,34 +32,34 @@
     "chain": "Ethereum",
     "apy": 3.52,
     "apy30d": 3.52,
-    "tvlM": 254.8,
+    "tvlM": 305.6,
     "url": "https://spark.fi/savings"
   },
   {
     "project": "fluid-lending",
     "symbol": "USDC",
     "chain": "Ethereum",
-    "apy": 5.01,
-    "apy30d": 5.02,
-    "tvlM": 151.8,
+    "apy": 4.49,
+    "apy30d": 4.99,
+    "tvlM": 151.6,
     "url": "https://fluid.instadapp.io/lending/"
   },
   {
     "project": "fluid-lending",
     "symbol": "USDT",
     "chain": "Ethereum",
-    "apy": 5.52,
-    "apy30d": 4.59,
-    "tvlM": 134.5,
+    "apy": 5.58,
+    "apy30d": 4.64,
+    "tvlM": 139.4,
     "url": "https://fluid.instadapp.io/lending/"
   },
   {
     "project": "aave-v3",
     "symbol": "USDT",
     "chain": "Ethereum",
-    "apy": 5.49,
-    "apy30d": 4.28,
-    "tvlM": 68.2,
+    "apy": 4.8,
+    "apy30d": 4.33,
+    "tvlM": 68.0,
     "url": "https://app.aave.com/markets/"
   },
   {
@@ -67,71 +67,80 @@
     "symbol": "USDT",
     "chain": "Ethereum",
     "apy": 2.62,
-    "apy30d": 3.73,
-    "tvlM": 64.9,
+    "apy30d": 3.7,
+    "tvlM": 61.1,
     "url": "https://app.spark.fi/markets/"
   },
   {
     "project": "aave-v3",
     "symbol": "USDC",
     "chain": "Ethereum",
-    "apy": 5.56,
-    "apy30d": 5.23,
-    "tvlM": 57.5,
+    "apy": 4.97,
+    "apy30d": 5.24,
+    "tvlM": 57.4,
     "url": "https://app.aave.com/markets/"
   },
   {
     "project": "curve-dex",
     "symbol": "USDC-RLUSD",
     "chain": "Ethereum",
-    "apy": 5.77,
-    "apy30d": 5.51,
-    "tvlM": 55.8,
+    "apy": 7.99,
+    "apy30d": 5.57,
+    "tvlM": 57.3,
     "url": "https://curve.fi/#/ethereum/pools"
+  },
+  {
+    "project": "aave-v3",
+    "symbol": "USDC",
+    "chain": "Arbitrum",
+    "apy": 2.02,
+    "apy30d": 2.41,
+    "tvlM": 55.1,
+    "url": "https://app.aave.com/markets/"
   },
   {
     "project": "fluid-lending",
     "symbol": "USDC",
     "chain": "Arbitrum",
-    "apy": 4.54,
-    "apy30d": 4.87,
-    "tvlM": 52.5,
+    "apy": 4.48,
+    "apy30d": 4.83,
+    "tvlM": 52.7,
     "url": "https://fluid.instadapp.io/lending/"
   },
   {
     "project": "centrifuge-protocol",
     "symbol": "USDC",
     "chain": "Base",
-    "apy": 4.02,
-    "apy30d": 5.21,
-    "tvlM": 50.4,
+    "apy": 4.72,
+    "apy30d": 5.22,
+    "tvlM": 50.5,
     "url": "https://defillama.com/protocol/centrifuge-protocol"
-  },
-  {
-    "project": "curve-dex",
-    "symbol": "PYUSD-USDC",
-    "chain": "Ethereum",
-    "apy": 4.45,
-    "apy30d": 5.34,
-    "tvlM": 43.1,
-    "url": "https://curve.fi/#/ethereum/pools"
   },
   {
     "project": "sentora",
     "symbol": "USDC",
     "chain": "Ethereum",
-    "apy": 4.39,
-    "apy30d": 6.55,
+    "apy": 4.44,
+    "apy30d": 6.41,
     "tvlM": 42.4,
     "url": "https://defillama.com/protocol/sentora"
+  },
+  {
+    "project": "curve-dex",
+    "symbol": "PYUSD-USDC",
+    "chain": "Ethereum",
+    "apy": 6.06,
+    "apy30d": 5.3,
+    "tvlM": 42.3,
+    "url": "https://curve.fi/#/ethereum/pools"
   },
   {
     "project": "fluid-lite",
     "symbol": "USDC",
     "chain": "Ethereum",
-    "apy": 7.21,
-    "apy30d": 7.28,
-    "tvlM": 41.6,
+    "apy": 7.18,
+    "apy30d": 7.25,
+    "tvlM": 41.7,
     "url": "https://defillama.com/protocol/fluid-lite"
   },
   {
@@ -139,15 +148,15 @@
     "symbol": "USDC",
     "chain": "Ethereum",
     "apy": 7.85,
-    "apy30d": 7.83,
-    "tvlM": 37.2,
+    "apy30d": 7.72,
+    "tvlM": 36.5,
     "url": "https://defillama.com/protocol/midas-rwa"
   },
   {
     "project": "goldfinch",
     "symbol": "USDC",
     "chain": "Ethereum",
-    "apy": 10.21,
+    "apy": 10.15,
     "apy30d": 10.21,
     "tvlM": 36.0,
     "url": "https://app.goldfinch.finance/earn"
@@ -156,63 +165,54 @@
     "project": "compound-v3",
     "symbol": "USDC",
     "chain": "Ethereum",
-    "apy": 4.23,
-    "apy30d": 3.8,
-    "tvlM": 35.5,
+    "apy": 4.09,
+    "apy30d": 3.84,
+    "tvlM": 35.7,
     "url": "https://app.compound.finance/"
-  },
-  {
-    "project": "aave-v3",
-    "symbol": "USDC",
-    "chain": "Arbitrum",
-    "apy": 2.59,
-    "apy30d": 2.43,
-    "tvlM": 33.3,
-    "url": "https://app.aave.com/markets/"
-  },
-  {
-    "project": "aave-v3",
-    "symbol": "USDC",
-    "chain": "Base",
-    "apy": 3.08,
-    "apy30d": 3.44,
-    "tvlM": 30.8,
-    "url": "https://app.aave.com/markets/"
   },
   {
     "project": "dolomite",
     "symbol": "USDC",
     "chain": "Ethereum",
-    "apy": 7.48,
-    "apy30d": 7.5,
-    "tvlM": 29.3,
+    "apy": 7.58,
+    "apy30d": 7.52,
+    "tvlM": 29.2,
     "url": "https://dolomite.io/"
   },
   {
     "project": "compound-v3",
     "symbol": "USDT",
     "chain": "Ethereum",
-    "apy": 3.14,
+    "apy": 3.16,
     "apy30d": 3.15,
-    "tvlM": 29.2,
+    "tvlM": 27.8,
     "url": "https://app.compound.finance/"
+  },
+  {
+    "project": "aave-v3",
+    "symbol": "USDC",
+    "chain": "Base",
+    "apy": 3.4,
+    "apy30d": 3.43,
+    "tvlM": 23.2,
+    "url": "https://app.aave.com/markets/"
   },
   {
     "project": "morpho-blue",
     "symbol": "KPK-USDC-PRIME",
     "chain": "Ethereum",
-    "apy": 4.28,
+    "apy": 4.29,
     "apy30d": 4.04,
-    "tvlM": 20.8,
+    "tvlM": 21.0,
     "url": "https://defillama.com/protocol/morpho-blue"
   },
   {
     "project": "yearn-finance",
     "symbol": "USDC",
     "chain": "Ethereum",
-    "apy": 3.49,
-    "apy30d": 3.31,
-    "tvlM": 19.6,
+    "apy": 3.58,
+    "apy30d": 3.33,
+    "tvlM": 19.5,
     "url": "https://yearn.fi/"
   },
   {
@@ -220,7 +220,7 @@
     "symbol": "USDC",
     "chain": "Ethereum",
     "apy": 7.2,
-    "apy30d": 7.84,
+    "apy30d": 7.88,
     "tvlM": 17.1,
     "url": "https://defillama.com/protocol/ember-protocol"
   },
@@ -234,22 +234,22 @@
     "url": "https://defillama.com/protocol/pareto-credit"
   },
   {
+    "project": "morpho-blue",
+    "symbol": "API3-DCOMP-USDC",
+    "chain": "Ethereum",
+    "apy": 6.82,
+    "apy30d": 7.42,
+    "tvlM": 14.1,
+    "url": "https://defillama.com/protocol/morpho-blue"
+  },
+  {
     "project": "zerobase-cedefi",
     "symbol": "USDT",
     "chain": "Ethereum",
     "apy": 9,
     "apy30d": 9,
-    "tvlM": 14.0,
+    "tvlM": 14.1,
     "url": "https://app.zerobase.pro/en"
-  },
-  {
-    "project": "morpho-blue",
-    "symbol": "API3-DCOMP-USDC",
-    "chain": "Ethereum",
-    "apy": 7.23,
-    "apy30d": 7.44,
-    "tvlM": 13.4,
-    "url": "https://defillama.com/protocol/morpho-blue"
   },
   {
     "project": "accountable",
